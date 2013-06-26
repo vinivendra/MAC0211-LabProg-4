@@ -10,6 +10,7 @@
 #include "grade.h"
 #include "util.h"
 #include "pixel.h"
+#include "Vector_2D.h"
 
 /*
  Defines de valores iniciais
@@ -22,6 +23,7 @@
 #define probabilidadeDeObstaculosInicial 0.3
 #define limiteDasMargens 0.25
 #define tamanhoInicial 4
+#define rotacao 0.0174532925
 
 /*
  BOOL
@@ -59,6 +61,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco);
  */
 
 int main (int argc, char *argv[]) {
+    
     /*
      Declaração de variáveis
      */
@@ -71,6 +74,9 @@ int main (int argc, char *argv[]) {
     float limiteMargens = limiteDasMargens;
     int tamPixel = tamanhoInicial;
     
+    float sen = sinf(rotacao);
+    float cos = cosf(rotacao);
+    
     bool doexit = NO;       /* Para saber quando sair do programa */
     
     bool key[4] = {NO, NO, NO, NO};     /* Vetor que guarda se cada tecla está apertada */
@@ -79,21 +85,24 @@ int main (int argc, char *argv[]) {
     int player_y = alturaDaGrade*tamPixel - 40;
     int boatSize = tamPixel + larguraDoRio*0.1;
     
-    int velLR =  tamPixel*larguraDoRio*0.006 + 2;
-    int velU = (tamPixel*alturaDaGrade*0.006);
-    int velD = (tamPixel*alturaDaGrade*0.02);
+    Vector_2D *velBarco = v_initZero();
     
     int seed = 1;           /* seed pro random */
     int verbose = 0;        /* flag do modo verbose */
     int indice = 0;         /* usado para imprimir a grade */
     pixel **grade;          /* A grade em que se guarda as informacoes sobre o rio */
     
+    /*
+     Leitura de argumentos
+    */
+    
     getArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
     corrigeArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
     
     if(boatSize > 30) boatSize = 30;
-    if(velU > 5) velU = 5;
-    if(velD > 7) velD = 9;
+    
+    v_setXY(velBarco, 0, tamPixel*larguraDoRio*0.006 + 2);
+#warning corrigir a velocidade do barco de acordo
     
     if (verbose) {
         printf ("\t \t Opcoes disponiveis: \n"
@@ -193,18 +202,22 @@ int main (int argc, char *argv[]) {
         
         else if (ev.type == ALLEGRO_EVENT_TIMER && al_is_event_queue_empty(event_queue)) {  /* Se o timer já chegou no próximo frame */
             
-            if(key[KEY_UP] && player_y > (2*velU + boatSize*2) ) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
-                player_y -= velU;
+            if(key[KEY_UP]) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
+                player_x += v_getX(velBarco);
+                player_y += v_getY(velBarco) - (tamPixel*larguraDoRio*0.006) - 2;
             }
-            if(key[KEY_DOWN] && player_y < alturaDaGrade*tamPixel-(2*velD + boatSize*2)) {
-                player_y += velD;
+            if(key[KEY_DOWN]) {
+                player_x -= v_getX(velBarco);
+                player_y -= v_getY(velBarco) - (tamPixel*larguraDoRio*0.006) - 2;
             }
-            if(key[KEY_LEFT] && player_x > (2*velLR + 2*boatSize/3)) {
-                player_x -= velLR;
+            if(key[KEY_LEFT]) {
+                v_rotate_SC(velBarco, sen, cos);
             }
-            if(key[KEY_RIGHT] && player_x < larguraDoRio*tamPixel - (2*velLR + 2*boatSize/3)) {
-                player_x += velLR;
+            if(key[KEY_RIGHT]) {
+                v_rotate_SC(velBarco, -sen, cos);
             }
+            
+
             
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
             
