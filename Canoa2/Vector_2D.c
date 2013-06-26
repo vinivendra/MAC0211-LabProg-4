@@ -49,7 +49,7 @@ void v_setXY (Vector_2D *v, float x, float y) {
     v->h = size(*v);
 }
 
-void v_rotate (Vector_2D *v, float angle) {
+void v_rotateA (Vector_2D *v, float angle) {
     float cosV = v_getCos(v);
     float sinV = v_getSen(v);
     float sinA = sinf(angle);
@@ -57,6 +57,17 @@ void v_rotate (Vector_2D *v, float angle) {
     
     float newCos = cosV*cosA - sinV*sinA;
     float newSin = sinV*cosA + sinA*cosV;
+    
+    v->x = v->h*newCos;
+    v->y = v->h*newSin;
+}
+
+void v_rotate_SC (Vector_2D *v, float sen, float cos) {
+    float cosV = v_getCos(v);
+    float sinV = v_getSen(v);
+    
+    float newCos = cosV*cos - sinV*sen;
+    float newSin = sinV*cos + sen*cosV;
     
     v->x = v->h*newCos;
     v->y = v->h*newSin;
