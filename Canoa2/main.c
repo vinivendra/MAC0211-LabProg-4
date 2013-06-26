@@ -10,6 +10,7 @@
 #include "grade.h"
 #include "util.h"
 #include "pixel.h"
+#include "Vector_2D.h"
 
 /*
  Defines de valores iniciais
@@ -22,6 +23,7 @@
 #define probabilidadeDeObstaculosInicial 0.3
 #define limiteDasMargens 0.25
 #define tamanhoInicial 4
+#define rotacao 0.0523598776
 
 /*
  BOOL
@@ -58,6 +60,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco);
  */
 
 int main (int argc, char *argv[]) {
+    
     /*
      Declaração de variáveis
      */
@@ -70,6 +73,9 @@ int main (int argc, char *argv[]) {
     float limiteMargens = limiteDasMargens;
     int tamPixel = tamanhoInicial;
     
+    float sen = sinf(rotacao);
+    float cos = cosf(rotacao);
+    
     bool doexit = NO;       /* Para saber quando sair do programa */
     
     bool key[4] = {NO, NO, NO, NO};     /* Vetor que guarda se cada tecla está apertada */
@@ -80,22 +86,27 @@ int main (int argc, char *argv[]) {
     int player_y = alturaDaGrade*tamPixel - 40;
     int player_y2 = alturaDaGrade*tamPixel - 40 + foog;
     int boatSize = tamPixel + larguraDoRio*0.1;
+
+    float x2, y2; /*pontos para determinar a reta*/
     
-    int velLR =  tamPixel*larguraDoRio*0.006 + 2;
-    int velU = (tamPixel*alturaDaGrade*0.006);
-    int velD = (tamPixel*alturaDaGrade*0.02);
+    Vector_2D *velBarco = v_initZero();
     
     int seed = 1;           /* seed pro random */
     int verbose = 0;        /* flag do modo verbose */
     int indice = 0;         /* usado para imprimir a grade */
     pixel **grade;          /* A grade em que se guarda as informacoes sobre o rio */
     
+    /*
+     Leitura de argumentos
+    */
+    
     getArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
     corrigeArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
     
     if(boatSize > 30) boatSize = 30;
-    if(velU > 5) velU = 5;
-    if(velD > 7) velD = 9;
+    
+    v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/2);
+#warning corrigir a velocidade do barco de acordo
     
     if (verbose) {
         printf ("\t \t Opcoes disponiveis: \n"
@@ -132,7 +143,7 @@ int main (int argc, char *argv[]) {
     
     /* Criação do primeiro frame */
     criaPrimeiroFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, dIlha, pIlha);
-    
+
     if (!STinitAllegro(larguraDoRio, tamPixel, velocidadeDoBarco)){
         exit (-1);
     }
@@ -147,6 +158,9 @@ int main (int argc, char *argv[]) {
     
     
     al_start_timer(timer);
+
+    x2 = boatSize*v_getCos(velBarco) + player_x;
+    y2  = boatSize*v_getSen(velBarco) + player_y;
     
     outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_x2, player_y, player_y2, tamPixel);
     
@@ -212,6 +226,8 @@ int main (int argc, char *argv[]) {
                 player_x2 += velLR;
             }
             
+
+            
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
             
             /* Popula a grade com as informações do próximo frame */
@@ -220,6 +236,7 @@ int main (int argc, char *argv[]) {
             /* Imprime a grade na tela */
             outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_x2, player_y, player_y2, tamPixel);
             
+
         }
         
     }
