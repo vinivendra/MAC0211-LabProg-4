@@ -26,6 +26,7 @@ void v_setXY (Vector_2D *v, float x, float y);          /* Insere novos valores 
 
 void v_rotateA (Vector_2D *v, float angle);             /* Roda o vetor 'angle' radianos para a esquerda */
 void v_rotate_SC (Vector_2D *v, float sen, float cos);  /* Igual ao v_rotateA, mas recebe o seno e o cosseno de 'angle'; mais eficiente */
+void v_rotate_SC_up (Vector_2D *v, float sen, float cos);   /* Igual ao v_rotate_SC, mas mantém o vetor sempre apontando para cima (sen > 0) */
 void v_setSize (Vector_2D *v, float size);              /* Muda o tamanho do vetor, mas mantém seu ângulo */
 
 /* Getters */

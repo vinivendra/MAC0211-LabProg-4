@@ -12,6 +12,7 @@ struct vector_2D {
 /* Protótipos */
 
 float size (Vector_2D v);
+int sign (int x);
 
 
 
@@ -71,6 +72,26 @@ void v_rotate_SC (Vector_2D *v, float sen, float cos) {
     
     v->x = v->h*newCos;
     v->y = v->h*newSin;
+}
+
+void v_rotate_SC_up (Vector_2D *v, float sen, float cos) {
+    float cosV = v_getCos(v);
+    float sinV = v_getSen(v);
+    
+    float newCos = cosV*cos - sinV*sen;
+    float newSin = sinV*cos + sen*cosV;
+    
+    if (newSin > 0) {
+        v->x = v->h*newCos;
+        v->y = v->h*newSin;
+    }
+    else {
+        if (sen > 0)
+            v->x = -v->h;
+        else
+            v->x = v->h;
+        v->y = 0;
+    }
 }
 
 void v_setSize (Vector_2D *v, float size) {
@@ -145,4 +166,3 @@ float v_getCos (Vector_2D *v) {
 float size (Vector_2D v) {
     return sqrtf((v.x*v.x)+(v.y*v.y));
 }
-
