@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "Vector_2D.h"
-#include "MathPlus.h"
 
 struct vector_2D {
     float x;
@@ -10,26 +9,38 @@ struct vector_2D {
     float h;
 };
 
-#pragma mark Declarações
+/* Protótipos */
 
 float size (Vector_2D v);
 
-#pragma mark Funções públicas
+
+
+/*
+ Funções públicas
+*/
+
+/* Initializers */
 
 Vector_2D *v_initZero () {
     Vector_2D *v = malloc(sizeof(Vector_2D));
-    v_setXY(v, 0, 0);
+    v->x = 0;
+    v->y = 0;
+    v->h = 0;
     return v;
 }
 
+
+
+/* Setters */
+
 void v_setX (Vector_2D *v, float x) {
     v->x = x;
-    v->h = v_getSize(v);
+    v->h = size(*v);
 }
 
 void v_setY (Vector_2D *v, float y) {
     v->y = y;
-    v->h = v_getSize(v);
+    v->h = size(*v);
 }
 
 void v_setXY (Vector_2D *v, float x, float y) {
@@ -41,19 +52,28 @@ void v_setXY (Vector_2D *v, float x, float y) {
 void v_rotate (Vector_2D *v, float angle) {
     float cosV = v_getCos(v);
     float sinV = v_getSen(v);
+    float sinA = sinf(angle);
+    float cosA = cosf(angle);
     
-    float newCos = cosV*cosf(angle) - sinV*sinf(angle);
-    float newSin = sinV*cosf(angle) + sinf(angle)*cosV;
+    float newCos = cosV*cosA - sinV*sinA;
+    float newSin = sinV*cosA + sinA*cosV;
     
-    v_setXY(v, v->h*newCos, v->h*newSin);
+    v->x = v->h*newCos;
+    v->y = v->h*newSin;
 }
 
 void v_setSize (Vector_2D *v, float size) {
-    v_setXY(v, v->h*v_getCos(v), v->h*v_getSen(v));
+    float cosV = v_getCos(v);
+    float sinV = v_getSen(v);
+    
+    v->x = size*cosV;
+    v->y = size*sinV;
+    v->h = size;
 }
 
 
 
+/* Getters */
 
 float v_getX (Vector_2D *v) {
     return v->x;
@@ -107,7 +127,9 @@ float v_getCos (Vector_2D *v) {
     return v->x/v->h;
 }
 
-#pragma mark Funções privadas
+
+
+/* Funções privadas */
 
 float size (Vector_2D v) {
     return sqrtf((v.x*v.x)+(v.y*v.y));
