@@ -84,6 +84,8 @@ int main (int argc, char *argv[]) {
     int player_x = larguraDoRio*tamPixel/2; /* Posiçao da canoa */
     int player_y = alturaDaGrade*tamPixel - 40;
     int boatSize = tamPixel + larguraDoRio*0.1;
+
+    float x2, y2; /*pontos para determinar a reta*/
     
     Vector_2D *velBarco = v_initZero();
     
@@ -139,7 +141,7 @@ int main (int argc, char *argv[]) {
     
     /* Criação do primeiro frame */
     criaPrimeiroFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, dIlha, pIlha);
-    
+
     if (!STinitAllegro(larguraDoRio, tamPixel, velocidadeDoBarco)){
         exit (-1);
     }
@@ -154,8 +156,11 @@ int main (int argc, char *argv[]) {
     
     
     al_start_timer(timer);
+
+    x2 = boatSize*v_getCos(velBarco) + player_x;
+    y2  = boatSize*v_getSen(velBarco) + player_y;
     
-    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel);
+    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y,x2,y2, tamPixel);
     
     while (!doexit) {
         ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
@@ -225,7 +230,9 @@ int main (int argc, char *argv[]) {
             criaProximoFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, indice, dIlha, pIlha);
             
             /* Imprime a grade na tela */
-            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel);
+	     x2 = boatSize*v_getCos(velBarco) + player_x;
+	     y2  = boatSize*v_getSen(velBarco) + player_y;
+	     outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, x2, y2,tamPixel);
             
         }
         
