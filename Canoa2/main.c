@@ -23,7 +23,7 @@
 #define probabilidadeDeObstaculosInicial 0.3
 #define limiteDasMargens 0.25
 #define tamanhoInicial 4
-#define rotacao 0.0174532925
+#define rotacao 0.0523598776
 
 /*
  BOOL
@@ -101,7 +101,7 @@ int main (int argc, char *argv[]) {
     
     if(boatSize > 30) boatSize = 30;
     
-    v_setXY(velBarco, 0, tamPixel*larguraDoRio*0.006 + 2);
+    v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/2);
 #warning corrigir a velocidade do barco de acordo
     
     if (verbose) {
@@ -204,11 +204,11 @@ int main (int argc, char *argv[]) {
             
             if(key[KEY_UP]) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
                 player_x += v_getX(velBarco);
-                player_y += v_getY(velBarco) - (tamPixel*larguraDoRio*0.006) - 2;
+                player_y -= v_getY(velBarco);
             }
             if(key[KEY_DOWN]) {
                 player_x -= v_getX(velBarco);
-                player_y -= v_getY(velBarco) - (tamPixel*larguraDoRio*0.006) - 2;
+                player_y += v_getY(velBarco);
             }
             if(key[KEY_LEFT]) {
                 v_rotate_SC(velBarco, sen, cos);
