@@ -1,0 +1,120 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[brazil]{babel}
+\usepackage{listings}
+\lstset{language=C}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\PassOptionsToPackage{usenames,dvipsnames,svgnames}{xcolor}  
+\usetikzlibrary{arrows,positioning,automata}
+\begin{document}
+
+\begin{center}{\Large \bf Documenta\c{c}ão EP2-B Canoagem \\ }\end{center}
+\begin{center}{\Large \bf Manual do Usuário\\ }\end{center}
+
+\begin{center}
+{
+Fellipe Souto Sampaio\footnote{Número USP: 7990422 e-mail: fellipe.sampaio@usp.com}
+Gervásio Protásio dos Santos Neto \footnote{Número USP: 7990996 e-mail: gervasio.neto@usp.br}
+Vinícius Jorge Vendramini \footnote{Número USP: 7991103 e-mail: vinicius.vendramini@usp.br}
+}
+
+\end{center}
+
+\begin{center}
+MAC 0211 Laboratório de Programa\c{c}ão I \\
+Prof. Kelly Rosa Braghetto \\
+             
+\end{center}
+
+\begin{center}
+Instituto de Matemática e Estatística - IME USP \\
+ Rua do Matão 1010 \\
+ 05311-970\, Cidade Universitária, São Paulo - SP \\
+\end{center}
+
+\newpage
+
+\section{Introdu\c{c}ão}
+Esta documenta\c{c}ão apresenta uma breve descri\c{c}ão sobre o exercício programa 2-B canoagem e um pequeno guia de execu\c{c}ão, que permite que qualquer usuário sem prévio conhecimento de programa\c{c}ão possa executar e simular um rio virtual.
+
+\section{Canoagem - O come\c{c}o de nossa jornada}
+Bem vindo ao incrível mundo dos esportes radicais, é um prazer conhece-lo. Você alguma vez ja fez canoagem na sua vida? "Não" será a resposta da maioria, mesmo sendo um esporte muito eletrizante e radical é pequena a parcela do público que tem oportunidade de praticar tal esporte, as vezes pela falta de conhecimento, ou o custo do equipamento ou até mesmo medo de alguma lesão física.
+O mundo da simula\c{c}ão virtual nos permite contornar esses problemas, podemos ter então um singelo simulador de canoagem, totalmente interativo e divertido. Nosso trabalho como desenvolvedores será entregar ao nosso público uma pequena experiência dentro dos esportes radicais, que divirta e empolgue a todos, e quem sabe um dia um de nossos jogadores não venha a praticar a canoagem real.
+
+\section{Canoagem - Como funciona?}
+Nosso processo de desenvolvimento está dividído em três fases. Apresentamos ao público a primeira parte e segunda fase, que cuidam da simula\c{c}ão do rio no qual o barco irá navegar e sua animação gráfica. Esta simula\c{c}ão assemelha-se a uma pequena anima\c{c}ão de uma tomada aérea feita por um helicóptero sobrevoando um vasto rio, é possível visualizar suas curvas e obstáculos que surgem ao longo do caminho e controlar discretamente a navegação de um barco dentro do rio. Em anexo colocamos algumas imagens da execu\c{c}ão do programa para que o usuário tenha no\c{c}ão de como ela parece.
+
+
+\section{Canoagem - Como executar?}
+Nosso programa, no presente estado, está sendo desenvolvido para plataforma GNU/Linux, estamos considerando a portabilidade para outras plataformas em um futuro próximo. Para executar o programa o usuário deve seguir os seguintes passos descritos a seguir:
+
+\begin{enumerate}
+\item[1-]{Copia o arquivo baixado para uma pasta de sua preferência}
+\item[2-]{Iniciar um novo terminar e navegar até a pasta escolhida}
+\item[3-]{Estando na pasta digite o seguinte comando no terminal : \textit{tar --zxvf nomedoarquivo.tar.gz}}
+\item[4-]{Entre na nova pasta}
+\item[5-]{Novamente no terminal digite : \textit{make} e em seguida \textit{make teste}}
+\item[6-]{Dois arquivos de saída serão gerados, a execu\c{c}ão de ambos será explicado a seguir}
+\end{enumerate}
+
+Após descompactar e compilar o programa você obtera dois executáveis, \textit{ep3 e teste}. O primeiro é o nosso simulador do rio virtual, que exibe a simulação da canoagem que foi previamente discutida, o segundo é um arquivo de testes para testar se a execu\c{c}ão do programa está correto, ao chamar este programa ele exibe um relatório de funcionamento na tela com diversas informa\c{c}ões, isso pode ser interessante aos usuários mais experientes ou curiosos. 
+
+\section{Canoagem - A interface gráfica}
+Agora estamos em nossa segunda fase de desenvolvimento do nosso simulador de canoagem. Partimos nesta fase de uma simples execução em uma janela de texto para um intuitivo ambiente gráfico, no qual simula muito mais realisticamente um rio. As intruções para preparação da execução da etapa anterior ainda valem para esta fase, adicionamos apenas um novo parâmetro \textit{-D} que pode aumentar a densidade dos pixels na tela de execução, um detalhe técnico não muito relevante para usuários comuns. A navegação do barco também já é possível, os comandos para movimentação deste são:
+
+\begin{enumerate}
+\item[]{ $\downarrow$ Move para baixo}
+\item[]{ $\uparrow$ Move para cima}
+\item[]{  $\leftarrow$ Move para esquerda}
+\item[]{   $\rightarrow$ Move para direita}
+
+
+
+\end{enumerate}
+
+
+\section{Canoagem - Parâmetros e execu\c{c}ão}
+Nosso programa está pronto para ser executado, para isso basta digitar no seu terminal \textit{./ep3 ou ./teste}. Uma simulação será gerada na tela do usuário e prosseguirá até que o usuário decida por abortar a execu\c{c}ão, isso pode ser feito pressionando a tecla \textit{ESC}, no caso do teste isso não é necessário, o programa irá rodar uma quantidade pré-definida de tempo e exibirá o relatório no terminal.
+Pode-se customizar a simula\c{c}ão e o teste por meio de passagem de parâmetros para o programa. Caso o usuário realize uma chamada simples como a explicada a cima valores padrões de execu\c{c}ão serão utilizados para gerar o rio. Para inserir novos parâmetros temos as seguintes op\c{c}ões disponíveis:
+
+\begin{enumerate}
+\item[]{-b  $\rightarrow$ Velocidade do barco}
+\item[]{-l  $\rightarrow$ Largura do Rio}
+\item[]{-s  $\rightarrow$ Semente para o gerador aleatorio}
+\item[]{-f  $\rightarrow$ Fluxo da agua}
+\item[]{-pI $\rightarrow$ Probabilidade de haver obstaculos}
+\item[]{-dI $\rightarrow$ Distancia minima entre obstaculos}
+\item[]{-lM $\rightarrow$ Limite das margens}
+\item[]{-v  $\rightarrow$ Verbose(impressão dos dados entrados)}
+\item[]{-D  $\rightarrow$ Densidade dos pixel por ponto impresso}
+
+
+
+\end{enumerate}
+
+podemos, por exemplo, ter a seguinte chamada do programa : \textit{"./ep3 -l100 -f50 -b2 -lM0.5 -v"} que simularia a execu\c{c}ão do rio, ou mesmo \textit{"./teste -l100 -f50 -b2 -lM0.5 -v"} que simularia a concretude e a confiabilidade da execu\c{c}ão.
+
+\newpage
+\subsection{Anexo - Fotos da execu\c{c}ão}
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[scale=0.4]{figura2.png}
+\caption{Execu\c{c}ão 1}
+
+\end{center}
+\end{figure}
+
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[scale=0.3]{figura1.png}
+\caption{Execu\c{c}ão 2}
+\end{center}
+\end{figure}
+\end{document}
