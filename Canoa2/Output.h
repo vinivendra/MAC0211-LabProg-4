@@ -20,4 +20,5 @@ void freeOutput ();
 void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, float x2, float y2, int tamPixel);
 
 
+
 #endif

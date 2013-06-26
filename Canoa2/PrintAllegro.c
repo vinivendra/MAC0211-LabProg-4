@@ -26,6 +26,7 @@ void outputArray (pixel **array, int altura, int largura, int indice, int player
     ALLEGRO_COLOR ilha = al_map_rgb(6, 96, 0);
     ALLEGRO_COLOR canoa = al_map_rgb(51, 51, 51);
     
+
     int i, j;
     int ilha0 = 999999, ilhaf = 0;      /* Variáveis que guardam o começo de uma ilha e o final dela */
     

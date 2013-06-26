@@ -234,6 +234,7 @@ int main (int argc, char *argv[]) {
 	     y2  = boatSize*v_getSen(velBarco) + player_y;
 	     outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, x2, y2,tamPixel);
             
+
         }
         
     }
