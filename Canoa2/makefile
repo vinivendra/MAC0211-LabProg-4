@@ -3,7 +3,7 @@ testeName = teste
 execOptions =  -g -o $(execName) -lm -lc -lallegro -lallegro_primitives -lallegro_dialog
 testeOptions = -g -o $(testeName) -lm -lc -lallegro -lallegro_primitives -lallegro_dialog
 objOptions = -g -pedantic -Wall -lm -lc -lallegro -lallegro_dialog -lallegro_primitives
-objectsAllegro = main.o PrintAllegro.o grade.o rio.o util.o pixel.o
+objectsAllegro = main.o PrintAllegro.o grade.o rio.o util.o pixel.o Vector_2D.o
 objectsTeste = teste.o PrintAllegro.o grade.o rio.o util.o pixel.o rotinasTeste.o
 
 
@@ -35,6 +35,9 @@ util.o: util.c
 
 pixel.o: pixel.c
 	gcc -c pixel.c $(objOptions)
+
+Vector_2D.o:
+	gcc -c Vector_2D.c $(objOptions)
 
 rotinasTeste.o: rotinasTeste.c
 	gcc -c rotinasTeste.c $(objOptions)
