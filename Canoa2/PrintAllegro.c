@@ -20,7 +20,7 @@ typedef int BOOL;
  Implementação
  */
 
-void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, int tamPixel) {
+void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_x2, int player_y, int player_y2, int tamPixel) {
     ALLEGRO_COLOR terra = al_map_rgb(110, 60, 40);      /* Cores */
     ALLEGRO_COLOR agua = al_map_rgb(51, 153, 255);
     ALLEGRO_COLOR ilha = al_map_rgb(6, 96, 0);
@@ -96,12 +96,12 @@ void outputArray (pixel **array, int altura, int largura, int indice, int player
         
         /* Desenha a margem direita */
         al_draw_filled_rectangle(tamPixel*(largura - TMargemDireita), tamPixel*i, tamPixel*(largura), tamPixel*(i+1), terra);
-        
+
     }
     
     /* Desenha o jogador na posição correta */
-    al_draw_filled_ellipse(player_x, player_y, playerSize/3, playerSize, canoa);
-    
+    /*al_draw_filled_ellipse(player_x, player_y, playerSize/3, playerSize, canoa);*/
+    al_draw_line(player_x, player_y, player_x2, player_y2, canoa, 5.0);
     /* Coloca tudo o que foi desenhado na tela */
     al_flip_display();
 }

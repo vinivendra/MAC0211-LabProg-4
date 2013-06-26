@@ -30,7 +30,6 @@
 #define YES 1
 #define NO 0
 typedef int BOOL;
-
 /*
  Variáveis do allegro
  */
@@ -75,8 +74,11 @@ int main (int argc, char *argv[]) {
     
     bool key[4] = {NO, NO, NO, NO};     /* Vetor que guarda se cada tecla está apertada */
     
+    int foog = 15;
     int player_x = larguraDoRio*tamPixel/2; /* Posiçao da canoa */
+    int player_x2 =  larguraDoRio*tamPixel/2 + foog;
     int player_y = alturaDaGrade*tamPixel - 40;
+    int player_y2 = alturaDaGrade*tamPixel - 40 + foog;
     int boatSize = tamPixel + larguraDoRio*0.1;
     
     int velLR =  tamPixel*larguraDoRio*0.006 + 2;
@@ -146,7 +148,7 @@ int main (int argc, char *argv[]) {
     
     al_start_timer(timer);
     
-    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel);
+    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_x2, player_y, player_y2, tamPixel);
     
     while (!doexit) {
         ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
@@ -195,15 +197,19 @@ int main (int argc, char *argv[]) {
             
             if(key[KEY_UP] && player_y > (2*velU + boatSize*2) ) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
                 player_y -= velU;
+                player_y2 -= velU;
             }
             if(key[KEY_DOWN] && player_y < alturaDaGrade*tamPixel-(2*velD + boatSize*2)) {
                 player_y += velD;
+                player_y2 += velD;
             }
             if(key[KEY_LEFT] && player_x > (2*velLR + 2*boatSize/3)) {
                 player_x -= velLR;
+                player_x2 -= velLR;
             }
             if(key[KEY_RIGHT] && player_x < larguraDoRio*tamPixel - (2*velLR + 2*boatSize/3)) {
                 player_x += velLR;
+                player_x2 += velLR;
             }
             
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
@@ -212,7 +218,7 @@ int main (int argc, char *argv[]) {
             criaProximoFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, indice, dIlha, pIlha);
             
             /* Imprime a grade na tela */
-            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel);
+            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_x2, player_y, player_y2, tamPixel);
             
         }
         
