@@ -162,7 +162,7 @@ int main (int argc, char *argv[]) {
     x2 = boatSize*v_getCos(velBarco) + player_x;
     y2  = boatSize*v_getSen(velBarco) + player_y;
     
-    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_x2, player_y, player_y2, tamPixel);
+    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y,x2,y2, tamPixel);
     
     while (!doexit) {
         ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
@@ -209,21 +209,19 @@ int main (int argc, char *argv[]) {
         
         else if (ev.type == ALLEGRO_EVENT_TIMER && al_is_event_queue_empty(event_queue)) {  /* Se o timer já chegou no próximo frame */
             
-            if(key[KEY_UP] && player_y > (2*velU + boatSize*2) ) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
-                player_y -= velU;
-                player_y2 -= velU;
+            if(key[KEY_UP]) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
+                player_x += v_getX(velBarco);
+                player_y -= v_getY(velBarco);
             }
-            if(key[KEY_DOWN] && player_y < alturaDaGrade*tamPixel-(2*velD + boatSize*2)) {
-                player_y += velD;
-                player_y2 += velD;
+            if(key[KEY_DOWN]) {
+                player_x -= v_getX(velBarco);
+                player_y += v_getY(velBarco);
             }
-            if(key[KEY_LEFT] && player_x > (2*velLR + 2*boatSize/3)) {
-                player_x -= velLR;
-                player_x2 -= velLR;
+            if(key[KEY_LEFT]) {
+                v_rotate_SC(velBarco, sen, cos);
             }
-            if(key[KEY_RIGHT] && player_x < larguraDoRio*tamPixel - (2*velLR + 2*boatSize/3)) {
-                player_x += velLR;
-                player_x2 += velLR;
+            if(key[KEY_RIGHT]) {
+                v_rotate_SC(velBarco, -sen, cos);
             }
             
 
@@ -234,7 +232,9 @@ int main (int argc, char *argv[]) {
             criaProximoFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, indice, dIlha, pIlha);
             
             /* Imprime a grade na tela */
-            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_x2, player_y, player_y2, tamPixel);
+	     x2 = boatSize*v_getCos(velBarco) + player_x;
+	     y2  = -boatSize*v_getSen(velBarco) + player_y;
+	     outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, x2, y2,tamPixel);
             
 
         }
