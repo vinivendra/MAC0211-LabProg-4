@@ -104,5 +104,9 @@ void outputArray (pixel **array, int altura, int largura, int indice, int player
     al_draw_rotated_bitmap(boat, 12.5, 25, player_x + 12.5, player_y - 25, angle, NULL);
         
     /* Coloca tudo o que foi desenhado na tela */
+    if (seg < 10)
+        al_draw_textf(fonte, al_map_rgb(255, 0, 0), largura*tamPixel - 80 ,10, ALLEGRO_ALIGN_RIGHT, "%d:0%d", min, seg);
+    else
+        al_draw_textf(fonte, al_map_rgb(255, 0, 0), largura*tamPixel - 80 ,10, ALLEGRO_ALIGN_RIGHT, "%d:%d", min, seg);
     al_flip_display();
 }

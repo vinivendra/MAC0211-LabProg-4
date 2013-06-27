@@ -7,6 +7,8 @@
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include "Output.h"
 #include "grade.h"
 #include "util.h"
@@ -38,10 +40,11 @@ typedef int BOOL;
  */
 
 ALLEGRO_DISPLAY *display = NULL;    /* Display, ou seja, a janela criada pelo allegro */
-ALLEGRO_EVENT_QUEUE *event_queue = NULL;    /* A event queue, usada para manejar eventos */
-ALLEGRO_TIMER *timer = NULL; /* O timer do programa */
+ALLEGRO_EVENT_QUEUE *event_queue = NULL, *fila_contador = NULL;    /* A event queue, usada para manejar eventos */
+ALLEGRO_TIMER *timer = NULL, *contador = 0 ;/* O timer do programa */
 ALLEGRO_BITMAP *boat = NULL;
-
+ALLEGRO_FONT *fonte = NULL;
+int min, seg;
 /*
  Teclas das setas
  */
@@ -56,7 +59,7 @@ enum KEYS {
 
 void freeOutput();
 BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco);
-
+void pointCounter ();
 /*
  main
  */
@@ -95,6 +98,10 @@ int main (int argc, char *argv[]) {
     int verbose = 0;        /* flag do modo verbose */
     int indice = 0;         /* usado para imprimir a grade */
     pixel **grade;          /* A grade em que se guarda as informacoes sobre o rio */
+    
+    al_init_font_addon(); 
+    al_init_ttf_addon();
+    
     
     /*
      Leitura de argumentos
@@ -140,6 +147,7 @@ int main (int argc, char *argv[]) {
     
     /* Inicializacao da grade */
     grade = initGrade(alturaDaGrade, larguraDoRio);
+    
     
     /* Criação do primeiro frame */
     criaPrimeiroFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, dIlha, pIlha);
@@ -296,7 +304,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
     }
     
     al_init_primitives_addon();
-    
+
     display = al_create_display(larguraDoRio*size, (alturaDaGrade-1)*size);      /* Cria o display */
     
     if(!display) {          /* Caso haja erro na criação, imprime e sai. */
@@ -339,10 +347,36 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
         return -1;
     }
     
+    fonte = al_load_font("pirulen.ttf", 50, 0);
+    if (!fonte)
+    {
+        fprintf(stderr, "Falha ao carregar fonte.\n");
+        freeOutput();
+        return false;
+    }
+ 
+    contador = al_create_timer(1.0);
+    if (!contador)
+    {
+        fprintf(stderr, "Falha ao criar timer.\n");
+        freeOutput();
+        return false;
+    }
+ 
+    fila_contador = al_create_event_queue();
+    if (!fila_contador)
+    {
+        fprintf(stderr, "Falha ao criar fila do contador.\n");
+        freeOutput();
+        return false;
+    }
+ 
+    
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_keyboard_event_source());
-    
+    al_register_event_source(fila_contador, al_get_timer_event_source(contador));
+        
     return YES;
 }
 
@@ -351,13 +385,31 @@ void freeOutput() { /* Dá free em qualquer coisa que o allegro tenha allocado *
         al_destroy_display(display);            /* Dá free no display */
     if (event_queue != NULL)
         al_destroy_event_queue(event_queue);    /* Dá free na event queue */
-    if (timer != NULL) {
+    if (timer != NULL)
         al_destroy_timer(timer);                /* Dá free no timer */
-    }
     if (boat != NULL) {
         al_destroy_bitmap(boat);
     }
     
+}
+
+
+void pointCounter (){
+    if (!al_is_event_queue_empty(fila_contador))
+    {
+        ALLEGRO_EVENT evento;
+        al_wait_for_event(fila_contador, &evento);
+ 
+        if (evento.type == ALLEGRO_EVENT_TIMER)
+        {
+            seg++;
+            if (seg == 60)
+            {
+                min++;
+                seg = 0;
+            }
+        }
+    }
 }
 
 
