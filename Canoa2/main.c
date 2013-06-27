@@ -18,7 +18,7 @@
  */
 #define framesPerSecond 50
 #define larguraDoRioInicial 200
-#define fluxoDesejadoInicial 325
+#define fluxoDesejadoInicial 125
 #define alturaDaGrade 200
 #define distanciaEntreIlhasInicial 40
 #define probabilidadeDeObstaculosInicial 0.1
@@ -86,7 +86,9 @@ int main (int argc, char *argv[]) {
     int player_y = alturaDaGrade*tamPixel - 40;
     int boatSize = tamPixel + larguraDoRio*0.1;
     float angle = 0;
-        
+    
+    int invulnerabilidade = 100;
+    
     Vector_2D *velBarco = v_initZero();
     
     int seed = 1;           /* seed pro random */
@@ -160,8 +162,12 @@ int main (int argc, char *argv[]) {
     outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle);
     
     while (!doexit) {
+        
         ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
         al_wait_for_event(event_queue, &ev);    /* Faz o allegro esperar até que exista um evento na fila */
+        
+        if (invulnerabilidade > 0)
+            invulnerabilidade --;
         
         if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)     /* Caso o usuário aperte o botão 'x', saímos do programa */
             doexit = YES;
@@ -232,8 +238,8 @@ int main (int argc, char *argv[]) {
                     angle += rotacao;
                 else angle = 3.141592653589/2;
             }
-                        
-            player_y += velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio/tamPixel)]) * tamPixel;;
+            
+            player_y += velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) * tamPixel;;
             
             if (player_y < 50)
                 player_y = 50;
@@ -243,6 +249,14 @@ int main (int argc, char *argv[]) {
                 player_x = 25;
             if (player_x > larguraDoRio * tamPixel - 50)
                 player_x = larguraDoRio * tamPixel - 50;
+                        
+            if (tipo(&grade[((int)((player_y)/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) == TERRA && invulnerabilidade == 0) {
+                player_x = larguraDoRio*tamPixel/2;
+                player_y = alturaDaGrade*tamPixel - 40;
+                angle = 0;
+                v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/1.2);
+                invulnerabilidade = 60;
+            }
             
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
                         
