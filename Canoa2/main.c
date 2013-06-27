@@ -239,9 +239,7 @@ int main (int argc, char *argv[]) {
             }
             
             float bla = velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%larguraDoRio]) * tamPixel;
-            
-            printf("%f\n", bla);
-            
+                        
             player_y += bla;
                         
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
