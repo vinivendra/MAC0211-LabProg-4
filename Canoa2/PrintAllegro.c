@@ -21,7 +21,7 @@ typedef int BOOL;
  Implementação
  */
 
-void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, int tamPixel, ALLEGRO_BITMAP *boat, float angle, float bla,int min, int seg, ALLEGRO_FONT *fonte) {
+void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, int tamPixel, ALLEGRO_BITMAP *boat, float angle,int min, int seg, ALLEGRO_FONT *fonte) {
     ALLEGRO_COLOR terra = al_map_rgb(110, 60, 40);      /* Cores */
     ALLEGRO_COLOR agua = al_map_rgb(51, 153, 255);
     ALLEGRO_COLOR ilha = al_map_rgb(6, 96, 0);

@@ -21,7 +21,7 @@
 */
 
 void freeOutput ();
-void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, int tamPixel, ALLEGRO_BITMAP *boat, float angle, float bla,int min, int seg, ALLEGRO_FONT *fonte);
+void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, int tamPixel, ALLEGRO_BITMAP *boat, float angle,int min, int seg, ALLEGRO_FONT *fonte);
 
 
 

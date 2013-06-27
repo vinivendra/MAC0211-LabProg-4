@@ -90,7 +90,7 @@ int main (int argc, char *argv[]) {
     int boatSize = tamPixel + larguraDoRio*0.1;
     float angle = 0;
     
-    int invulnerabilidade = 30;
+    int invulnerabilidade = 60;
     
     Vector_2D *velBarco = v_initZero();
     
@@ -117,7 +117,7 @@ int main (int argc, char *argv[]) {
     
     if (verbose) {
         printf ("\t \t Opcoes disponiveis: \n"
-                "-b = %f  - Velocidade do barco\n"
+                "-b = %f  - FPS inicial\n"
                 "-l = %d  - Largura do Rio\n"
                 "-s = %d  - Semente para o gerador aleatorio\n"
                 "-f = %d  - Fluxo da agua\n"
@@ -170,7 +170,7 @@ int main (int argc, char *argv[]) {
     pointCounter ();
 
     
-    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle,0,min,seg,fonte);
+    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle,min,seg,fonte);
     
     while (!doexit) {
         
@@ -178,9 +178,7 @@ int main (int argc, char *argv[]) {
         al_wait_for_event(event_queue, &ev);    /* Faz o allegro esperar até que exista um evento na fila */
         
         if (invulnerabilidade > 0) {
-            invulnerabilidade --;
-            printf("%d\n", invulnerabilidade);
-            continue;
+            invulnerabilidade --;        
         }
         
         if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)     /* Caso o usuário aperte o botão 'x', saímos do programa */
@@ -264,12 +262,14 @@ int main (int argc, char *argv[]) {
             if (player_x > larguraDoRio * tamPixel - 50)
                 player_x = larguraDoRio * tamPixel - 50;
                         
-            if (tipo(&grade[((int)((player_y)/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) == TERRA && invulnerabilidade > 0) {
+            if (tipo(&grade[((int)((player_y)/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) == TERRA && invulnerabilidade == 0) {
                 player_x = larguraDoRio*tamPixel/2;
                 player_y = alturaDaGrade*tamPixel - 40;
                 angle = 0;
                 v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/1.2);
-                invulnerabilidade = 30;
+                invulnerabilidade = 60;
+                min = 0;
+                seg = 0;
             }
             
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
@@ -279,7 +279,7 @@ int main (int argc, char *argv[]) {
             
             /* Imprime a grade na tela */
             pointCounter ();
-            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle,bla,min,seg,fonte);
+            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle,min,seg,fonte);
             
             
         }
