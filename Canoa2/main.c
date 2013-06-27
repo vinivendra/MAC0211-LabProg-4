@@ -16,9 +16,9 @@
 /*
  Defines de valores iniciais
  */
-#define velocidadeDoBarcoInicial 50
-#define larguraDoRioInicial 400
-#define fluxoDesejadoInicial 500
+#define framesPerSecond 50
+#define larguraDoRioInicial 200
+#define fluxoDesejadoInicial 325
 #define alturaDaGrade 200
 #define distanciaEntreIlhasInicial 40
 #define probabilidadeDeObstaculosInicial 0.1
@@ -67,7 +67,7 @@ int main (int argc, char *argv[]) {
      Declaração de variáveis
      */
     
-    float velocidadeDoBarco = velocidadeDoBarcoInicial;
+    float FPSInicial = framesPerSecond;
     int larguraDoRio = larguraDoRioInicial;
     int fluxoDesejado = fluxoDesejadoInicial;
     int dIlha = distanciaEntreIlhasInicial;
@@ -86,9 +86,7 @@ int main (int argc, char *argv[]) {
     int player_y = alturaDaGrade*tamPixel - 40;
     int boatSize = tamPixel + larguraDoRio*0.1;
     float angle = 0;
-    
-    float x2, y2; /*pontos para determinar a reta*/
-    
+        
     Vector_2D *velBarco = v_initZero();
     
     int seed = 1;           /* seed pro random */
@@ -100,8 +98,8 @@ int main (int argc, char *argv[]) {
      Leitura de argumentos
      */
     
-    getArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
-    corrigeArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
+    getArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
+    corrigeArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
     
     if(boatSize > 30) boatSize = 30;
     
@@ -119,7 +117,7 @@ int main (int argc, char *argv[]) {
                 "-dI = %d - Distancia minima entre obstaculos\n"
                 "-lM = %f - Limite de tamanho das margens (de 0 a 1)\n"
                 "-D = %d - Tamanho de cada pixel\n"
-                "Pressione Enter para continuar...\n", velocidadeDoBarco, larguraDoRio, seed, fluxoDesejado, verbose, pIlha, dIlha, limiteMargens, tamPixel);
+                "Pressione Enter para continuar...\n", FPSInicial, larguraDoRio, seed, fluxoDesejado, verbose, pIlha, dIlha, limiteMargens, tamPixel);
         getchar();
     }
     
@@ -144,7 +142,7 @@ int main (int argc, char *argv[]) {
     /* Criação do primeiro frame */
     criaPrimeiroFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, dIlha, pIlha);
     
-    if (!STinitAllegro(larguraDoRio, tamPixel, velocidadeDoBarco)){
+    if (!STinitAllegro(larguraDoRio, tamPixel, FPSInicial)){
         exit (-1);
     }
     
@@ -159,10 +157,7 @@ int main (int argc, char *argv[]) {
     
     al_start_timer(timer);
     
-    x2 = boatSize*v_getCos(velBarco) + player_x;
-    y2  = boatSize*v_getSen(velBarco) + player_y;
-    
-    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y,x2,y2, tamPixel, boat, angle);
+    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle);
     
     while (!doexit) {
         ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
@@ -237,20 +232,25 @@ int main (int argc, char *argv[]) {
                     angle += rotacao;
                 else angle = 3.141592653589/2;
             }
+                        
+            player_y += velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio/tamPixel)]) * tamPixel;;
             
-            float bla = velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%larguraDoRio]) * tamPixel;
-                        
-            player_y += bla;
-                        
+            if (player_y < 50)
+                player_y = 50;
+            if (player_y > alturaDaGrade * tamPixel - 25)
+                player_y = alturaDaGrade * tamPixel - 25;
+            if (player_x < 25)
+                player_x = 25;
+            if (player_x > larguraDoRio * tamPixel - 50)
+                player_x = larguraDoRio * tamPixel - 50;
+            
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
                         
             /* Popula a grade com as informações do próximo frame */
             criaProximoFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, indice, dIlha, pIlha);
             
             /* Imprime a grade na tela */
-            x2 = boatSize*v_getCos(velBarco) + player_x;
-            y2 = -boatSize*v_getSen(velBarco) + player_y;
-            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, x2, y2, tamPixel, boat, angle);
+            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle);
             
             
         }

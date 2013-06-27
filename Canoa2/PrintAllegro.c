@@ -5,9 +5,9 @@
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
 #include "rio.h"
 #include "Output.h"
-#include "rio.h"
 #include "pixel.h"
 
 #define YES 1
@@ -21,19 +21,18 @@ typedef int BOOL;
  Implementação
  */
 
-void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y,float x2, float y2, int tamPixel, ALLEGRO_BITMAP *boat, float angle) {
+void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, int tamPixel, ALLEGRO_BITMAP *boat, float angle) {
     ALLEGRO_COLOR terra = al_map_rgb(110, 60, 40);      /* Cores */
     ALLEGRO_COLOR agua = al_map_rgb(51, 153, 255);
     ALLEGRO_COLOR ilha = al_map_rgb(6, 96, 0);
-    ALLEGRO_COLOR canoa = al_map_rgb(51, 51, 51);
     
-
     int i, j;
     int ilha0 = 999999, ilhaf = 0;      /* Variáveis que guardam o começo de uma ilha e o final dela */
     
     
     int playerSize = tamPixel + largura*0.1;
     if(playerSize > 30) playerSize = 30;
+    
     
     al_clear_to_color(agua);
     
@@ -102,10 +101,8 @@ void outputArray (pixel **array, int altura, int largura, int indice, int player
     }
     
     /* Desenha o jogador na posição correta */
-    /*al_draw_filled_ellipse(player_x, player_y, playerSize/3, playerSize, canoa);*/
-    /*al_draw_line(player_x, player_y, x2, y2, canoa, 5.0);*/
     al_draw_rotated_bitmap(boat, 12.5, 25, player_x + 12.5, player_y - 25, angle, NULL);
-    
+        
     /* Coloca tudo o que foi desenhado na tela */
     al_flip_display();
 }

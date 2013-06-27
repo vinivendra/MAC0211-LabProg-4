@@ -157,7 +157,7 @@ void velocidadeProximaLinha (pixel *linha, pixel *linhaAnterior, int fluxoDeseja
             float aleatorio = realRandomico(0.9, 1.1);
             float velocidadeNova = velocidadeAnterior*aleatorio;
             if (velocidadeNova == 0) {
-                velocidadeNova = aleatorio*fluxoDesejado/(largura*8);
+                velocidadeNova = aleatorio*fluxoDesejado/(largura/1.5);
             }
             setaVelocidade(&linha[i], velocidadeNova);
         }
@@ -189,7 +189,7 @@ void suavizaVelocidades (pixel *linha, int largura) {
     int tamanhoDaMargemEsquerda = margemEsquerda(linha);
     int tamanhoDaMargemDireita = margemDireita(linha, largura);
     
-    for (j = 0; j < 6; j ++) {
+    for (j = 0; j < 3; j ++) {
         
         float velocidadeAnterior = 0;
         
