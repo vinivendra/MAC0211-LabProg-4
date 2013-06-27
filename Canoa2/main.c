@@ -87,7 +87,7 @@ int main (int argc, char *argv[]) {
     int boatSize = tamPixel + larguraDoRio*0.1;
     float angle = 0;
     
-    int invulnerabilidade = 100;
+    int invulnerabilidade = 30;
     
     Vector_2D *velBarco = v_initZero();
     
@@ -166,8 +166,11 @@ int main (int argc, char *argv[]) {
         ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
         al_wait_for_event(event_queue, &ev);    /* Faz o allegro esperar até que exista um evento na fila */
         
-        if (invulnerabilidade > 0)
+        if (invulnerabilidade > 0) {
             invulnerabilidade --;
+            printf("%d\n", invulnerabilidade);
+            continue;
+        }
         
         if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)     /* Caso o usuário aperte o botão 'x', saímos do programa */
             doexit = YES;
@@ -250,12 +253,12 @@ int main (int argc, char *argv[]) {
             if (player_x > larguraDoRio * tamPixel - 50)
                 player_x = larguraDoRio * tamPixel - 50;
                         
-            if (tipo(&grade[((int)((player_y)/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) == TERRA && invulnerabilidade == 0) {
+            if (tipo(&grade[((int)((player_y)/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) == TERRA && invulnerabilidade > 0) {
                 player_x = larguraDoRio*tamPixel/2;
                 player_y = alturaDaGrade*tamPixel - 40;
                 angle = 0;
                 v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/1.2);
-                invulnerabilidade = 60;
+                invulnerabilidade = 30;
             }
             
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
