@@ -18,7 +18,7 @@
  */
 #define velocidadeDoBarcoInicial 50
 #define larguraDoRioInicial 400
-#define fluxoDesejadoInicial 50
+#define fluxoDesejadoInicial 300
 #define alturaDaGrade 200
 #define distanciaEntreIlhasInicial 40
 #define probabilidadeDeObstaculosInicial 0.1
@@ -219,27 +219,33 @@ int main (int argc, char *argv[]) {
             }
             if(key[KEY_LEFT]) {
                 int rodou = v_rotate_SC_up(velBarco, sen, cos);
-                player_x += v_getX(velBarco)/2;
-                player_y -= v_getY(velBarco)/2;
+                if (!key[KEY_DOWN] && ! key[KEY_UP]) {
+                    player_x += v_getX(velBarco)/2;
+                    player_y -= v_getY(velBarco)/2;
+                }
                 if (rodou)
                     angle -= rotacao;
                 else angle = -3.141592653589/2;
             }
             if(key[KEY_RIGHT]) {
                 int rodou = v_rotate_SC_up(velBarco, -sen, cos);
-                player_x += v_getX(velBarco)/2;
-                player_y -= v_getY(velBarco)/2;
+                if (!key[KEY_DOWN] && ! key[KEY_UP]) {
+                    player_x += v_getX(velBarco)/2;
+                    player_y -= v_getY(velBarco)/2;
+                }
                 if (rodou)
                     angle += rotacao;
                 else angle = 3.141592653589/2;
             }
             
-            printf("%f\n", angle);
+            float bla = velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%larguraDoRio]) * tamPixel;
             
+            printf("%f\n", bla);
+            
+            player_y += bla;
+                        
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
-            
-            /*printf("%f\n", velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x*tamPixel)]));*/
-            
+                        
             /* Popula a grade com as informações do próximo frame */
             criaProximoFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, indice, dIlha, pIlha);
             
