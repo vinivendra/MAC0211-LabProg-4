@@ -74,7 +74,7 @@ void v_rotate_SC (Vector_2D *v, float sen, float cos) {
     v->y = v->h*newSin;
 }
 
-void v_rotate_SC_up (Vector_2D *v, float sen, float cos) {
+int v_rotate_SC_up (Vector_2D *v, float sen, float cos) {
     float cosV = v_getCos(v);
     float sinV = v_getSen(v);
     
@@ -84,6 +84,8 @@ void v_rotate_SC_up (Vector_2D *v, float sen, float cos) {
     if (newSin > 0) {
         v->x = v->h*newCos;
         v->y = v->h*newSin;
+        
+        return 1;
     }
     else {
         if (sen > 0)
@@ -91,6 +93,8 @@ void v_rotate_SC_up (Vector_2D *v, float sen, float cos) {
         else
             v->x = v->h;
         v->y = 0;
+        
+        return 0;
     }
 }
 

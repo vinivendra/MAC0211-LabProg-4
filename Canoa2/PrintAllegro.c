@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <allegro5/allegro.h>
+#include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 #include <allegro5/allegro_primitives.h>
 #include "rio.h"
@@ -20,7 +21,7 @@ typedef int BOOL;
  Implementação
  */
 
-void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y,float x2, float y2, int tamPixel) {
+void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y,float x2, float y2, int tamPixel, ALLEGRO_BITMAP *boat, float angle) {
     ALLEGRO_COLOR terra = al_map_rgb(110, 60, 40);      /* Cores */
     ALLEGRO_COLOR agua = al_map_rgb(51, 153, 255);
     ALLEGRO_COLOR ilha = al_map_rgb(6, 96, 0);
@@ -102,7 +103,8 @@ void outputArray (pixel **array, int altura, int largura, int indice, int player
     
     /* Desenha o jogador na posição correta */
     /*al_draw_filled_ellipse(player_x, player_y, playerSize/3, playerSize, canoa);*/
-    al_draw_line(player_x, player_y, x2, y2, canoa, 5.0);
+    /*al_draw_line(player_x, player_y, x2, y2, canoa, 5.0);*/
+    al_draw_rotated_bitmap(boat, 12.5, 25, player_x + 12.5, player_y - 25, angle, NULL);
     
     /* Coloca tudo o que foi desenhado na tela */
     al_flip_display();

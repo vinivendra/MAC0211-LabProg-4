@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <allegro5/allegro.h>
 #include "pixel.h"
+
 
 /*
  Interface para colocar na tela o que o programa quiser. Escrita de forma genérica,
@@ -17,7 +19,7 @@
 */
 
 void freeOutput ();
-void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y, float x2, float y2, int tamPixel);
+void outputArray (pixel **array, int altura, int largura, int indice, int player_x, int player_y,float x2, float y2, int tamPixel, ALLEGRO_BITMAP *boat, float angle);
 
 
 

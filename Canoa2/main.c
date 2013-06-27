@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <allegro5/allegro.h>
+#include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 #include <allegro5/allegro_primitives.h>
 #include "Output.h"
@@ -16,11 +17,11 @@
  Defines de valores iniciais
  */
 #define velocidadeDoBarcoInicial 50
-#define larguraDoRioInicial 200
+#define larguraDoRioInicial 400
 #define fluxoDesejadoInicial 50
-#define alturaDaGrade 100
-#define distanciaEntreIlhasInicial 25
-#define probabilidadeDeObstaculosInicial 0.3
+#define alturaDaGrade 200
+#define distanciaEntreIlhasInicial 40
+#define probabilidadeDeObstaculosInicial 0.1
 #define limiteDasMargens 0.25
 #define tamanhoInicial 4
 #define rotacao 0.0872664626
@@ -39,6 +40,7 @@ typedef int BOOL;
 ALLEGRO_DISPLAY *display = NULL;    /* Display, ou seja, a janela criada pelo allegro */
 ALLEGRO_EVENT_QUEUE *event_queue = NULL;    /* A event queue, usada para manejar eventos */
 ALLEGRO_TIMER *timer = NULL; /* O timer do programa */
+ALLEGRO_BITMAP *boat = NULL;
 
 /*
  Teclas das setas
@@ -52,7 +54,7 @@ enum KEYS {
  Protótipos
  */
 
-void freeOutput(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer);
+void freeOutput();
 BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco);
 
 /*
@@ -80,13 +82,11 @@ int main (int argc, char *argv[]) {
     
     bool key[4] = {NO, NO, NO, NO};     /* Vetor que guarda se cada tecla está apertada */
     
-    int foog = 15;
     int player_x = larguraDoRio*tamPixel/2; /* Posiçao da canoa */
-    int player_x2 =  larguraDoRio*tamPixel/2 + foog;
     int player_y = alturaDaGrade*tamPixel - 40;
-    int player_y2 = alturaDaGrade*tamPixel - 40 + foog;
     int boatSize = tamPixel + larguraDoRio*0.1;
-
+    float angle = 0;
+    
     float x2, y2; /*pontos para determinar a reta*/
     
     Vector_2D *velBarco = v_initZero();
@@ -98,7 +98,7 @@ int main (int argc, char *argv[]) {
     
     /*
      Leitura de argumentos
-    */
+     */
     
     getArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
     corrigeArgs(argc, argv, &velocidadeDoBarco, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
@@ -143,7 +143,7 @@ int main (int argc, char *argv[]) {
     
     /* Criação do primeiro frame */
     criaPrimeiroFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, dIlha, pIlha);
-
+    
     if (!STinitAllegro(larguraDoRio, tamPixel, velocidadeDoBarco)){
         exit (-1);
     }
@@ -158,11 +158,11 @@ int main (int argc, char *argv[]) {
     
     
     al_start_timer(timer);
-
+    
     x2 = boatSize*v_getCos(velBarco) + player_x;
     y2  = boatSize*v_getSen(velBarco) + player_y;
     
-    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y,x2,y2, tamPixel);
+    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y,x2,y2, tamPixel, boat, angle);
     
     while (!doexit) {
         ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
@@ -218,25 +218,37 @@ int main (int argc, char *argv[]) {
                 player_y += v_getY(velBarco);
             }
             if(key[KEY_LEFT]) {
-                v_rotate_SC_up(velBarco, sen, cos);
+                int rodou = v_rotate_SC_up(velBarco, sen, cos);
+                player_x += v_getX(velBarco)/2;
+                player_y -= v_getY(velBarco)/2;
+                if (rodou)
+                    angle -= rotacao;
+                else angle = -3.141592653589/2;
             }
             if(key[KEY_RIGHT]) {
-                v_rotate_SC_up(velBarco, -sen, cos);
+                int rodou = v_rotate_SC_up(velBarco, -sen, cos);
+                player_x += v_getX(velBarco)/2;
+                player_y -= v_getY(velBarco)/2;
+                if (rodou)
+                    angle += rotacao;
+                else angle = 3.141592653589/2;
             }
             
-
+            printf("%f\n", angle);
             
             indice = (indice - 1+alturaDaGrade) % alturaDaGrade;    /* Move a grade uma linha para cima */
+            
+            /*printf("%f\n", velocidade(&grade[((int)(player_y/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x*tamPixel)]));*/
             
             /* Popula a grade com as informações do próximo frame */
             criaProximoFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, indice, dIlha, pIlha);
             
             /* Imprime a grade na tela */
-	     x2 = boatSize*v_getCos(velBarco) + player_x;
-	     y2  = -boatSize*v_getSen(velBarco) + player_y;
-	     outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, x2, y2,tamPixel);
+            x2 = boatSize*v_getCos(velBarco) + player_x;
+            y2 = -boatSize*v_getSen(velBarco) + player_y;
+            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, x2, y2, tamPixel, boat, angle);
             
-
+            
         }
         
     }
@@ -268,27 +280,42 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
     
     if(!display) {          /* Caso haja erro na criação, imprime e sai. */
         al_show_native_message_box(display, "Error", "Error", "Failed to create display!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        freeOutput();
         return NO;
     }
+    
+    if(!al_init_image_addon()) {
+        al_show_native_message_box(display, "Error", "Error", "Failed to initialize al_init_image_addon!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        freeOutput();
+        return 0;
+    }
+    al_init_primitives_addon();
     
     event_queue = al_create_event_queue();
     if(!event_queue) {
         al_show_native_message_box(display, "Error", "Error", "Failed to create event queue!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        freeOutput(display, event_queue, timer);
+        freeOutput();
         return NO;
     }
     
     timer = al_create_timer(1.0/velocidadeDoBarco);
     if(!timer) {
         al_show_native_message_box(display, "Error", "Error", "Failed to create timer!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        freeOutput(display, event_queue, timer);
+        freeOutput();
         return NO;
     }
     
     if(!al_install_keyboard()) {
         al_show_native_message_box(display, "Error", "Error", "Failed to initialize keyboard!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        freeOutput(display, event_queue, timer);
+        freeOutput();
         return NO;
+    }
+    
+    boat = al_load_bitmap("boat.png");
+    if(!boat) {
+        al_show_native_message_box(display, "Error", "Error", "Failed to initialize bitmap!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+        freeOutput();
+        return -1;
     }
     
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -298,13 +325,16 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
     return YES;
 }
 
-void freeOutput(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_TIMER *timer) { /* Dá free em qualquer coisa que o allegro tenha allocado */
+void freeOutput() { /* Dá free em qualquer coisa que o allegro tenha allocado */
     if (display != NULL)
         al_destroy_display(display);            /* Dá free no display */
     if (event_queue != NULL)
         al_destroy_event_queue(event_queue);    /* Dá free na event queue */
     if (timer != NULL) {
         al_destroy_timer(timer);                /* Dá free no timer */
+    }
+    if (boat != NULL) {
+        al_destroy_bitmap(boat);
     }
     
 }

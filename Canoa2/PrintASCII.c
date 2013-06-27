@@ -13,7 +13,7 @@
 
 void initOutput ();
 void outputLine (pixel *linha, int largura);
-void outputArray (pixel **array, int altura, int largura, int indice);
+void outputArray (pixel **array, int altura, int largura, int indice, );
 
 /*
   Funções
