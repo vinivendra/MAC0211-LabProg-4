@@ -184,21 +184,24 @@ float velocidadeDaAguaPrimeiraLinha (float velocidadePontoAnterior) {
 
 
 void suavizaVelocidades (pixel *linha, int largura) {
-    int i = 0;
-    
+    int i, j;
+
     int tamanhoDaMargemEsquerda = margemEsquerda(linha);
     int tamanhoDaMargemDireita = margemDireita(linha, largura);
     
-    float velocidadeAnterior = 0;
-    
-    for (i = tamanhoDaMargemEsquerda; i < largura - tamanhoDaMargemDireita; i++) {
-        if (velocidade(&linha[i]) != 0) {
-            float velocidadeNova = (velocidadeAnterior + velocidade(&linha[i]) + velocidade(&linha[i+1]))/3;
-            velocidadeAnterior = velocidade(&linha[i]);
-            setaVelocidade(&linha[i], velocidadeNova);
-        }
-        else {
-            velocidadeAnterior = 0;
+    for (j = 0; j < 6; j ++) {
+        
+        float velocidadeAnterior = 0;
+        
+        for (i = tamanhoDaMargemEsquerda; i < largura - tamanhoDaMargemDireita; i++) {
+            if (velocidade(&linha[i]) != 0) {
+                float velocidadeNova = (velocidadeAnterior + velocidade(&linha[i]) + velocidade(&linha[i+1]))/3;
+                velocidadeAnterior = velocidade(&linha[i]);
+                setaVelocidade(&linha[i], velocidadeNova);
+            }
+            else {
+                velocidadeAnterior = 0;
+            }
         }
     }
 }
