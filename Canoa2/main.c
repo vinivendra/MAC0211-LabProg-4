@@ -167,12 +167,10 @@ int main (int argc, char *argv[]) {
     
     al_start_timer(timer);
     al_start_timer(contador);
-    x2 = boatSize*v_getCos(velBarco) + player_x;
-    y2  = boatSize*v_getSen(velBarco) + player_y;
     pointCounter ();
 
     
-    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y,x2,y2, tamPixel, boat, angle,0,min,seg,fonte);
+    outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle,0,min,seg,fonte);
     
     while (!doexit) {
         
@@ -280,10 +278,8 @@ int main (int argc, char *argv[]) {
             criaProximoFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, indice, dIlha, pIlha);
             
             /* Imprime a grade na tela */
-            x2 = boatSize*v_getCos(velBarco) + player_x;
-            y2 = -boatSize*v_getSen(velBarco) + player_y;
             pointCounter ();
-            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, x2, y2, tamPixel, boat, angle,bla,min,seg,fonte);
+            outputArray(grade, alturaDaGrade, larguraDoRio, indice, player_x, player_y, tamPixel, boat, angle,bla,min,seg,fonte);
             
             
         }
