@@ -43,7 +43,7 @@ ALLEGRO_DISPLAY *display = NULL;    /* Display, ou seja, a janela criada pelo al
 ALLEGRO_EVENT_QUEUE *event_queue = NULL, *fila_contador = NULL;    /* A event queue, usada para manejar eventos */
 ALLEGRO_TIMER *timer = NULL, *contador = 0 ;/* O timer do programa */
 ALLEGRO_BITMAP *boat = NULL;
-ALLEGRO_FONT *fonte = NULL;
+ALLEGRO_FONT *fonte = NULL, *fonteScore = NULL;
 int min, seg;
 /*
  Teclas das setas
@@ -91,6 +91,8 @@ int main (int argc, char *argv[]) {
     float angle = 0;
     
     int invulnerabilidade = 60;
+
+    int maxTime = 0;
     
     Vector_2D *velBarco = v_initZero();
     
@@ -113,7 +115,6 @@ int main (int argc, char *argv[]) {
     if(boatSize > 30) boatSize = 30;
     
     v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/1.2);
-#warning corrigir a velocidade do barco de acordo
     
     if (verbose) {
         printf ("\t \t Opcoes disponiveis: \n"
@@ -268,6 +269,9 @@ int main (int argc, char *argv[]) {
                 angle = 0;
                 v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/1.2);
                 invulnerabilidade = 60;
+
+		if( min*60 + seg > maxTime) maxTime = min*60 + seg;
+		
                 min = 0;
                 seg = 0;
             }
@@ -291,6 +295,11 @@ int main (int argc, char *argv[]) {
      Frees
      */
     
+
+    outputHighScore(maxTime, fonteScore, larguraDoRio, alturaDaGrade, tamPixel);
+    
+    sleep(10);
+
     freeOutput(display, event_queue, timer);        /* Dá free em qualquer coisa que o allegro tenha allocado */
     
     freeGrade(grade, alturaDaGrade, larguraDoRio);  /* Dá free na matriz da grade */
@@ -352,7 +361,8 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
     }
     
     fonte = al_load_font("pirulen.ttf", 50, 0);
-    if (!fonte)
+    fonteScore = al_load_font("pirulen.ttf", 30, 0);
+    if (!fonte || !fonteScore)
     {
         fprintf(stderr, "Falha ao carregar fonte.\n");
         freeOutput();

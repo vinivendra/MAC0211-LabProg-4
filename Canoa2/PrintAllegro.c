@@ -110,3 +110,12 @@ void outputArray (pixel **array, int altura, int largura, int indice, int player
         al_draw_textf(fonte, al_map_rgb(255, 0, 0), largura*tamPixel - 80 ,10, ALLEGRO_ALIGN_RIGHT, "%d:%d", min, seg);
     al_flip_display();
 }
+
+void outputHighScore(int highScore, ALLEGRO_FONT *font, int largura, int altura, int tamPixel){
+  al_flip_display();
+  al_clear_to_color(al_map_rgb(0, 0, 0));
+  al_draw_textf(font, al_map_rgb(123,123,123), largura/2, altura*tamPixel/2, ALLEGRO_ALIGN_LEFT, "VOCÊ PASSOU  %d:%d SEM BATER!\n", highScore/60, highScore%60);
+  al_draw_textf(font, al_map_rgb(123,123,123),largura/2, altura/2, ALLEGRO_ALIGN_LEFT, "SEU HIGHSCORE FOI %d!", highScore);
+  al_flip_display();
+  puts("foo");
+}
