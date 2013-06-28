@@ -298,7 +298,26 @@ int main (int argc, char *argv[]) {
 
     outputHighScore(maxTime, fonteScore, larguraDoRio, alturaDaGrade, tamPixel);
     
-    sleep(10);
+    al_destroy_timer(timer);
+    timer = NULL;
+    
+    doexit = NO;
+    
+    while (!doexit) {
+        
+        ALLEGRO_EVENT ev;       /* Variável para guardar qualquer evento que aconteça */
+        al_wait_for_event(event_queue, &ev);    /* Faz o allegro esperar até que exista um evento na fila */
+        
+        if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)     /* Caso o usuário aperte o botão 'x', saímos do programa */
+            doexit = YES;
+        
+        if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+            if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+                doexit = YES;
+            }
+        }
+    }
+    
 
     freeOutput(display, event_queue, timer);        /* Dá free em qualquer coisa que o allegro tenha allocado */
     
@@ -384,7 +403,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
         freeOutput();
         return false;
     }
- 
+    
     
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
