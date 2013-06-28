@@ -232,13 +232,13 @@ int main (int argc, char *argv[]) {
             if(key[KEY_UP]) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
                 player_x += v_getX(velBarco);
                 player_y -= v_getY(velBarco);
-                al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                 
             }
             if(key[KEY_DOWN]) {
                 player_x -= v_getX(velBarco);
                 player_y += v_getY(velBarco);
-                al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                 
             }
             if(key[KEY_LEFT]) {
@@ -246,7 +246,7 @@ int main (int argc, char *argv[]) {
                 if (!key[KEY_DOWN] && ! key[KEY_UP]) {
                     player_x += v_getX(velBarco)/2;
                     player_y -= v_getY(velBarco)/2;
-                    al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                     
                 }
                 if (rodou)
@@ -258,7 +258,7 @@ int main (int argc, char *argv[]) {
                 if (!key[KEY_DOWN] && ! key[KEY_UP]) {
                     player_x += v_getX(velBarco)/2;
                     player_y -= v_getY(velBarco)/2;
-                    al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                     
                 }
                 if (rodou)
