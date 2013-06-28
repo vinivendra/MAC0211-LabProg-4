@@ -309,7 +309,7 @@ int main (int argc, char *argv[]) {
      Frees
      */
     
-    
+    if( min*60 + seg > maxTime) maxTime = min*60 + seg;
     outputHighScore(maxTime, fonteScore, larguraDoRio, alturaDaGrade, tamPixel);
     
     al_destroy_timer(timer);
