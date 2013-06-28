@@ -39,8 +39,21 @@ pixel.o: pixel.c
 Vector_2D.o:
 	gcc -c Vector_2D.c $(objOptions)
 
+config.yy.o: config.yy.c config.tab.c
+	gcc -c config.yy.c
+
+config.tab.o: config.tab.c
+	gcc -c config.tab.c
+
+config.yy.c: config.l config.tab.h
+	flex -o config.yy.c config.l
+
+config.tab.c config.tab.h: config.y
+	bison -v -t --defines=config.tab.h -o config.tab.c config.y
+
+
 rotinasTeste.o: rotinasTeste.c
 	gcc -c rotinasTeste.c $(objOptions)
 
 clean:
-	rm -f *.o $(execName)
+	rm -f *.o *.yy.c *.tab.c $(execName)
