@@ -447,11 +447,10 @@ BOOL STinitAllegro (int larguraDoRio, int size, int fps){
       return NO;
     }
     
-    
-  al_register_event_source(event_queue, al_get_display_event_source(display));
-  al_register_event_source(event_queue, al_get_timer_event_source(timer));
-  al_register_event_source(event_queue, al_get_keyboard_event_source());
-  al_register_event_source(fila_contador, al_get_timer_event_source(contador));
+    al_register_event_source(event_queue, al_get_display_event_source(display));
+    al_register_event_source(event_queue, al_get_timer_event_source(timer));
+    al_register_event_source(event_queue, al_get_keyboard_event_source());
+    al_register_event_source(fila_contador, al_get_timer_event_source(contador));
         
   return YES;
 }
