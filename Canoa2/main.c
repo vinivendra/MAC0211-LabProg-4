@@ -232,13 +232,13 @@ int main (int argc, char *argv[]) {
             if(key[KEY_UP]) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
                 player_x += v_getX(velBarco);
                 player_y -= v_getY(velBarco);
-                al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                 
             }
             if(key[KEY_DOWN]) {
                 player_x -= v_getX(velBarco);
                 player_y += v_getY(velBarco);
-                al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                 
             }
             if(key[KEY_LEFT]) {
@@ -246,7 +246,7 @@ int main (int argc, char *argv[]) {
                 if (!key[KEY_DOWN] && ! key[KEY_UP]) {
                     player_x += v_getX(velBarco)/2;
                     player_y -= v_getY(velBarco)/2;
-                    al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                     
                 }
                 if (rodou)
@@ -258,7 +258,7 @@ int main (int argc, char *argv[]) {
                 if (!key[KEY_DOWN] && ! key[KEY_UP]) {
                     player_x += v_getX(velBarco)/2;
                     player_y -= v_getY(velBarco)/2;
-                    al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    al_play_sample(sample, 0.5, 0.0, 0.5, ALLEGRO_PLAYMODE_ONCE, NULL);
                     
                 }
                 if (rodou)
@@ -272,10 +272,10 @@ int main (int argc, char *argv[]) {
                 player_y = 50;
             if (player_y > alturaDaGrade * tamPixel - 25)
                 player_y = alturaDaGrade * tamPixel - 25;
-            if (player_x < 25)
-                player_x = 25;
-            if (player_x > larguraDoRio * tamPixel - 50)
-                player_x = larguraDoRio * tamPixel - 50;
+            if (player_x < 50)
+                player_x = 50;
+            if (player_x > larguraDoRio * tamPixel - 25)
+                player_x = larguraDoRio * tamPixel - 25;
             
             if (tipo(&grade[((int)((player_y)/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) == TERRA && invulnerabilidade == 0) {
                 player_x = larguraDoRio*tamPixel/2;
@@ -309,7 +309,7 @@ int main (int argc, char *argv[]) {
      Frees
      */
     
-    
+    if( min*60 + seg > maxTime) maxTime = min*60 + seg;
     outputHighScore(maxTime, fonteScore, larguraDoRio, alturaDaGrade, tamPixel);
     
     al_destroy_timer(timer);
@@ -347,9 +347,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, int fps){
     if(!al_init()){        /* Inicializa o allegro. Se falhar, imprime o erro e sai. */
         al_show_native_message_box(display, "Error", "Error", "Failed to initialize allegro!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         return NO;
-    }
-    printf ("passou11\n");
-    
+    }    
     al_init_primitives_addon();
     
     display = al_create_display(larguraDoRio*size, (alturaDaGrade-1)*size);      /* Cria o display */
