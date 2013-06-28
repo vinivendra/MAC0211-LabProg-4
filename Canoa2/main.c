@@ -272,10 +272,10 @@ int main (int argc, char *argv[]) {
                 player_y = 50;
             if (player_y > alturaDaGrade * tamPixel - 25)
                 player_y = alturaDaGrade * tamPixel - 25;
-            if (player_x < 25)
-                player_x = 25;
-            if (player_x > larguraDoRio * tamPixel - 50)
-                player_x = larguraDoRio * tamPixel - 50;
+            if (player_x < 50)
+                player_x = 50;
+            if (player_x > larguraDoRio * tamPixel - 25)
+                player_x = larguraDoRio * tamPixel - 25;
             
             if (tipo(&grade[((int)((player_y)/tamPixel) + indice - 1)%alturaDaGrade][(int)(player_x/tamPixel)%(larguraDoRio)]) == TERRA && invulnerabilidade == 0) {
                 player_x = larguraDoRio*tamPixel/2;

@@ -101,7 +101,7 @@ void outputArray (pixel **array, int altura, int largura, int indice, int player
     }
     
     /* Desenha o jogador na posição correta */
-    al_draw_rotated_bitmap(boat, 12.5, 25, player_x + 12.5, player_y - 25, angle, NULL);
+    al_draw_rotated_bitmap(boat, 25, 25, player_x + 25, player_y - 25, angle, NULL);
 
     /* Coloca tudo o que foi desenhado na tela */
     if (seg < 10)
