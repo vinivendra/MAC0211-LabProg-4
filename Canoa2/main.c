@@ -74,7 +74,7 @@ void pointCounter ();
 /*
  main
  */
-corrigeArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
+
 int main (int argc, char *argv[]) {
     
     /*
@@ -128,7 +128,7 @@ int main (int argc, char *argv[]) {
 
     getArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
 
-    corrigeArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
+    corrigeArgs();
 
     if(boatSize > 30) boatSize = 30;
     
