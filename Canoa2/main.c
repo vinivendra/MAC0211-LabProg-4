@@ -7,6 +7,8 @@
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include "Output.h"
@@ -44,6 +46,8 @@ ALLEGRO_EVENT_QUEUE *event_queue = NULL, *fila_contador = NULL;    /* A event qu
 ALLEGRO_TIMER *timer = NULL, *contador = 0 ;/* O timer do programa */
 ALLEGRO_BITMAP *boat = NULL;
 ALLEGRO_FONT *fonte = NULL, *fonteScore = NULL;
+ALLEGRO_AUDIO_STREAM *musica = NULL;
+ALLEGRO_SAMPLE *sample = NULL;
 int min, seg;
 /*
  Teclas das setas
@@ -104,7 +108,7 @@ int main (int argc, char *argv[]) {
     al_init_font_addon(); 
     al_init_ttf_addon();
     
-    
+
     /*
      Leitura de argumentos
      */
@@ -134,7 +138,7 @@ int main (int argc, char *argv[]) {
     /*
      Seed
      */
-    
+
     if (seed == 0)
         seed = (int)time(NULL);
     
@@ -152,14 +156,14 @@ int main (int argc, char *argv[]) {
     
     /* Criação do primeiro frame */
     criaPrimeiroFrame(grade, alturaDaGrade, larguraDoRio, limiteMargens, fluxoDesejado, dIlha, pIlha);
-    
+
     if (!STinitAllegro(larguraDoRio, tamPixel, FPSInicial)){
         exit (-1);
     }
     
     
     /* Registrar quaisquer fontes de eventos */
-    
+
     
     /*
      Frames subsequentes
@@ -168,6 +172,8 @@ int main (int argc, char *argv[]) {
     
     al_start_timer(timer);
     al_start_timer(contador);
+	al_attach_audio_stream_to_mixer(musica, al_get_default_mixer());
+    al_set_audio_stream_playing(musica, YES);
     pointCounter ();
 
     
@@ -226,16 +232,22 @@ int main (int argc, char *argv[]) {
             if(key[KEY_UP]) {      /* Se o usuário está apertando alguma tecla, faz a canoa se mexer */
                 player_x += v_getX(velBarco);
                 player_y -= v_getY(velBarco);
+				al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+
             }
             if(key[KEY_DOWN]) {
                 player_x -= v_getX(velBarco);
                 player_y += v_getY(velBarco);
+				al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+
             }
             if(key[KEY_LEFT]) {
                 int rodou = v_rotate_SC_up(velBarco, sen, cos);
                 if (!key[KEY_DOWN] && ! key[KEY_UP]) {
                     player_x += v_getX(velBarco)/2;
                     player_y -= v_getY(velBarco)/2;
+					al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+
                 }
                 if (rodou)
                     angle -= rotacao;
@@ -246,6 +258,8 @@ int main (int argc, char *argv[]) {
                 if (!key[KEY_DOWN] && ! key[KEY_UP]) {
                     player_x += v_getX(velBarco)/2;
                     player_y -= v_getY(velBarco)/2;
+					al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+
                 }
                 if (rodou)
                     angle += rotacao;
@@ -315,10 +329,25 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
         al_show_native_message_box(display, "Error", "Error", "Failed to initialize allegro!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         return NO;
     }
-    
-    al_init_primitives_addon();
+    printf ("passou11\n");
 
-    display = al_create_display(larguraDoRio*size, (alturaDaGrade-1)*size);      /* Cria o display */
+	al_init_primitives_addon();
+	
+	if (!al_install_audio()){
+        fprintf(stderr, "Falha ao inicializar áudio.\n");
+        return NO;
+    }
+
+	if (!al_init_acodec_addon()){
+        fprintf(stderr, "Falha ao inicializar codecs de áudio.\n");
+        return NO;
+    }		
+	
+	if (!al_reserve_samples(1)){
+        fprintf(stderr, "Falha ao alocar canais de áudio.\n");
+        return NO;
+    }
+    
     
     if(!display) {          /* Caso haja erro na criação, imprime e sai. */
         al_show_native_message_box(display, "Error", "Error", "Failed to create display!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
@@ -331,7 +360,6 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
         freeOutput();
         return 0;
     }
-    al_init_primitives_addon();
     
     event_queue = al_create_event_queue();
     if(!event_queue) {
@@ -366,7 +394,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
     {
         fprintf(stderr, "Falha ao carregar fonte.\n");
         freeOutput();
-        return false;
+        return NO;
     }
  
     contador = al_create_timer(1.0);
@@ -374,7 +402,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
     {
         fprintf(stderr, "Falha ao criar timer.\n");
         freeOutput();
-        return false;
+        return NO;
     }
  
     fila_contador = al_create_event_queue();
@@ -382,9 +410,22 @@ BOOL STinitAllegro (int larguraDoRio, int size, float velocidadeDoBarco){
     {
         fprintf(stderr, "Falha ao criar fila do contador.\n");
         freeOutput();
-        return false;
+        return NO;
     }
- 
+    
+    sample = al_load_sample("sfx.wav");
+    if (!sample)
+    {
+        fprintf(stderr, "Falha ao carregar sample.\n");
+        return NO;
+    }
+
+    musica = al_load_audio_stream("sound.ogg", 4, 1024);
+    if (!musica)
+    {
+        fprintf(stderr, "Falha ao carregar audio.\n");
+        return NO;
+    }
     
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
@@ -401,10 +442,12 @@ void freeOutput() { /* Dá free em qualquer coisa que o allegro tenha allocado *
         al_destroy_event_queue(event_queue);    /* Dá free na event queue */
     if (timer != NULL)
         al_destroy_timer(timer);                /* Dá free no timer */
-    if (boat != NULL) {
+    if (boat != NULL) 
         al_destroy_bitmap(boat);
-    }
-    
+    if (sample != NULL) 
+        al_destroy_sample(sample);
+    if (musica != NULL) 
+        al_destroy_audio_stream(musica);
 }
 
 
