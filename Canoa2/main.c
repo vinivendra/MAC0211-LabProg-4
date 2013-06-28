@@ -16,6 +16,7 @@
 #include "util.h"
 #include "pixel.h"
 #include "Vector_2D.h"
+#include "options.h"
 
 /*
  Defines de valores iniciais
@@ -29,6 +30,12 @@
 #define limiteDasMargens 0.25
 #define tamanhoInicial 4
 #define rotacao 0.0872664626
+
+/*BISON
+*/
+
+extern FILE* yyin;
+extern void yyparse();
 
 /*
  BOOL
@@ -74,13 +81,13 @@ int main (int argc, char *argv[]) {
      Declaração de variáveis
      */
     
-    float FPSInicial = framesPerSecond;
-    int larguraDoRio = larguraDoRioInicial;
-    int fluxoDesejado = fluxoDesejadoInicial;
-    int dIlha = distanciaEntreIlhasInicial;
-    float pIlha = probabilidadeDeObstaculosInicial;
-    float limiteMargens = limiteDasMargens;
-    int tamPixel = tamanhoInicial;
+    FPSInicial = framesPerSecond;
+    larguraDoRio = larguraDoRioInicial;
+    fluxoDesejado = fluxoDesejadoInicial;
+    dIlha = distanciaEntreIlhasInicial;
+    pIlha = probabilidadeDeObstaculosInicial;
+    limiteMargens = limiteDasMargens;
+    tamPixel = tamanhoInicial;
     
     float sen = sinf(rotacao);
     float cos = cosf(rotacao);
@@ -96,12 +103,12 @@ int main (int argc, char *argv[]) {
     
     int invulnerabilidade = 60;
     
-    int maxTime = 0;
-    
+    int maxTime = 0; 
+
     Vector_2D *velBarco = v_initZero();
     
-    int seed = 1;           /* seed pro random */
-    int verbose = 0;        /* flag do modo verbose */
+    seed = 1;           /* seed pro random */
+    verbose = 0;        /* flag do modo verbose */
     int indice = 0;         /* usado para imprimir a grade */
     pixel **grade;          /* A grade em que se guarda as informacoes sobre o rio */
     
@@ -115,7 +122,10 @@ int main (int argc, char *argv[]) {
     
     getArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
     corrigeArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
-    
+	
+    yyin = fopen("entrada.txt", "r"); /*nome default do nosso arquivo d entrada com as configuracoes do programa*/
+    yyparse();
+    fclose(yyin);
     if(boatSize > 30) boatSize = 30;
     
     v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/1.2);

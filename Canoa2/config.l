@@ -1,6 +1,11 @@
 %{  #include <stdlib.h>
     #include "config.tab.h"  
 %}
+%option noinput 
+%option nounput 
+%option never-interactive
+%option noyywrap 
+
 NUM_INT     [0-9]+
 NUM_REAL    [0-9]+[[.][0-9]{1,2}]?
 BRANCO      [' ']*

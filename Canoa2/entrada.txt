@@ -1,0 +1,9 @@
+FPS = 50
+Largura = 200
+Semente = 1
+Fluxo = 125
+Probabilidade = 0.1
+Distancia = 40
+Pixel = 4
+Limite = 0.25
+Verbose = 0
