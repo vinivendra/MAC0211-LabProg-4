@@ -1,0 +1,9 @@
+float FPSInicial;
+int fluxoDesejado;
+int larguraDoRio;
+int dIlha;
+float pIlha;
+float limiteMargens;
+int tamPixel;
+int seed;
+int verbose;

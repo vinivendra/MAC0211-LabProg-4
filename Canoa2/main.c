@@ -74,7 +74,7 @@ void pointCounter ();
 /*
  main
  */
-
+corrigeArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
 int main (int argc, char *argv[]) {
     
     /*
@@ -119,13 +119,17 @@ int main (int argc, char *argv[]) {
     /*
      Leitura de argumentos
      */
-    
-    getArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
-    corrigeArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
 	
     yyin = fopen("entrada.txt", "r"); /*nome default do nosso arquivo d entrada com as configuracoes do programa*/
+
     yyparse();
+
     fclose(yyin);
+
+    getArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
+
+    corrigeArgs(argc, argv, &FPSInicial, &larguraDoRio, &seed, &fluxoDesejado, &verbose, &dIlha, &pIlha, &limiteMargens, &tamPixel);
+
     if(boatSize > 30) boatSize = 30;
     
     v_setXY(velBarco, 0, (tamPixel*larguraDoRio*0.006 + 2)/1.2);
