@@ -347,9 +347,7 @@ BOOL STinitAllegro (int larguraDoRio, int size, int fps){
     if(!al_init()){        /* Inicializa o allegro. Se falhar, imprime o erro e sai. */
         al_show_native_message_box(display, "Error", "Error", "Failed to initialize allegro!", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         return NO;
-    }
-    printf ("passou11\n");
-    
+    }    
     al_init_primitives_addon();
     
     display = al_create_display(larguraDoRio*size, (alturaDaGrade-1)*size);      /* Cria o display */

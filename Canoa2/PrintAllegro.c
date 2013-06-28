@@ -117,5 +117,4 @@ void outputHighScore(int highScore, ALLEGRO_FONT *font, int largura, int altura,
   al_draw_textf(font, al_map_rgb(123,123,123), largura/2, altura*tamPixel/2, ALLEGRO_ALIGN_LEFT, "VOCÊ PASSOU  %d:%d SEM BATER!\n", highScore/60, highScore%60);
   al_draw_textf(font, al_map_rgb(123,123,123),largura/2, altura/2, ALLEGRO_ALIGN_LEFT, "SEU HIGHSCORE FOI %d!", highScore);
   al_flip_display();
-  puts("foo");
 }
