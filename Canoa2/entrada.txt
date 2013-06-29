@@ -1,0 +1,2 @@
+Largura = 200
+Verbose = 0

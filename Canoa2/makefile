@@ -1,9 +1,9 @@
 execName = ep3
 testeName = teste
-execOptions =  -g -o $(execName) -lm -lc -lallegro -lallegro_primitives -lallegro_dialog -lallegro_image -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec
+execOptions =  -g -o $(execName) -lm -lc -lallegro -lallegro_primitives -lallegro_dialog -lallegro_image -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec 
 testeOptions = -g -o $(testeName) -lm -lc -lallegro -lallegro_primitives -lallegro_dialog -lallegro_image -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec
 objOptions = -g -pedantic -Wall -lm -lc -lallegro -lallegro_dialog -lallegro_primitives -lallegro_image -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec
-objectsAllegro = main.o PrintAllegro.o grade.o rio.o util.o pixel.o Vector_2D.o
+objectsAllegro = main.o PrintAllegro.o grade.o rio.o util.o pixel.o Vector_2D.o config.tab.o config.yy.o
 objectsTeste = teste.o PrintAllegro.o grade.o rio.o util.o pixel.o rotinasTeste.o
 
 
@@ -39,8 +39,21 @@ pixel.o: pixel.c
 Vector_2D.o:
 	gcc -c Vector_2D.c $(objOptions)
 
+config.yy.o: config.yy.c config.tab.c
+	gcc -c config.yy.c
+
+config.tab.o: config.tab.c
+	gcc -c config.tab.c
+
+config.yy.c: config.l config.tab.h
+	flex -o config.yy.c config.l
+
+config.tab.c config.tab.h: config.y
+	bison -v -t --defines=config.tab.h -o config.tab.c config.y
+
+
 rotinasTeste.o: rotinasTeste.c
 	gcc -c rotinasTeste.c $(objOptions)
 
 clean:
-	rm -f *.o $(execName)
+	rm -f *.o *.yy.c *.tab.c $(execName)
