@@ -1,0 +1,425 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[brazil]{babel}
+\usepackage{listings}
+\lstset{language=C}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\PassOptionsToPackage{usenames,dvipsnames,svgnames}{xcolor}  
+\usetikzlibrary{arrows,positioning,automata}
+\begin{document}
+
+\begin{center}{\Large \bf Documenta\c{c}ão EP4 - Canoagem \\ }\end{center}
+\begin{center}{\Large \bf Manual do Desenvolvedor\\ }\end{center}
+
+\begin{center}
+{
+Fellipe Souto Sampaio\footnote{Número USP: 7990422 e-mail: fellipe.sampaio@usp.com}
+Gervásio Protásio dos Santos Neto \footnote{Número USP: 7990996 e-mail: gervasio.neto@usp.br}
+Vinícius Jorge Vendramini \footnote{Número USP: 7991103 e-mail: vinicius.vendramini@usp.br}
+}
+
+\end{center}
+
+\begin{center}
+MAC 0211 Laboratório de Programa\c{c}ão I \\
+Prof. Kelly Rosa Braghetto \\
+             
+\end{center}
+
+\begin{center}
+Instituto de Matemática e Estatística - IME USP \\
+ Rua do Matão 1010 \\
+ 05311-970\, Cidade Universitária, São Paulo - SP \\
+\end{center}
+
+\newpage
+
+\section{Introdu\c{c}ão}
+Esta documenta\c{c}ão apresenta uma completa descri\c{c}ão do funcionamento do exercício programa 2 parte C (vulgo ep 4) e seus algoritmos, divido através de sua implementa\c{c}ão nos .c e .h . As implementa\c{c}ões desenvolvidas nas fases anteriores foram mantidas, nesta terceira etapa as mudan\c{c}as se concentraram nos seguintes arquivos:
+
+\begin{enumerate}
+\item[•]{main.c}
+\item[•]{util.c}
+\item[•]{util.h}
+\item[•]{PrintAllegro.c}
+\item[•]{Output.h}
+\item[•]{Vector\_2D.c}
+\item[•]{Vector\_2D.h}
+\item[•]{options.h}
+\item[•]{config.l}
+\item[•]{config.y}
+\item[•]{makefile}
+\end{enumerate}
+
+As novas explana\c{c}ões serão feitas para as mudan\c{c}as realizadas nos itens citados acima, mantendo-se as explica\c{c}ões anteriores para os arquivos que foram omitidos.
+
+\section{Pixel}
+Para modelar o funcionamento da grade decidiu-se implementar um matriz de tipo pixel. Nesta estrura existe dois campos, \textit{velocidade} e \textit{tipo} que guardam a velocidade e o tipo do ponto respectivamente. Para lidar com esta estrutura foi implemetado as seguinte fun\c{c}ões:
+\begin{enumerate}
+\item[•]{velocidade - Retorna a velocidade de um ponto.}
+\item[•]{tipo - Retorna o tipo de um ponto.} 
+\item[•]{setaVelocidade - Muda a velocidade do ponto para o valor fornecido.} 
+\item[•]{setaTipo - Muda a natureza do ponto para o tipo fornecido.} 
+
+\end{enumerate}
+
+
+\section{Rio}
+Esta interface lida com toda opera\c{c}ão dos pontos, desde a gera\c{c}ão das margens, ilhas, velocidade da água entre outras. Temos duas fun\c{c} principais, primeiraLinha e proximaLinha, as quais estão disponíveis para outras interfaces. Seus métodos internos são chamados para constru\c{c}ão das linhas, cada qual exercendo uma funcionalidade própria. O fluxo de funcionamento das duas fun\c{c} está descrito nos anexos 1 e 2 respectivamente, onde cada vértice representa um método aplicado, o valor das aretas é a ordem em que são chamadas e por fim a orienta\c{c}ão do grafo informa o fluxo de informa\c{c}ões trocadas entre a fun\c{c} chamadora e a chamada.\\
+
+\subsection{primeiraLinha}
+Esta fun\c{c}ão tem a funcionalidade de criar a primeira linha da grade, que servirá como linha base para linhas subsequentes. Chama-se o método \textit{aleatorizaPrimeiraMargem} para definir tamanhos aleatórios para as margens esquerda e direita, dentro do limite estipulado pela variável limiteMargens. Após isso chama-se o método \textit{insereIlha} que tem o trabalho de inserir um obstáculo na por\c{c}ão central do rio de acordo com a probabilidade inserida pelo usuário. Um valor default definido em main.c é atribuido a probabilidade e a distância mínima entre ilhas, caso o usuário não fa\c{c}a a inser\c{c}ão destes valores. Inteiros aleatórios são gerados para simular a probabilidade P de existir ilhas ou não, seu tamanho será aleatoriamente gerado dentro dos limites da terceira por\c{c}ão da grade. Com intuito de evitar o encontro de uma das margens com uma dada ilha é considerado que \textbf{a distância mínima entre os dois deve ser de 2 pontos}
+Aplica-se o método \textit{velocidadeDaAguaPrimeiraLinha} a cada ponto de água que não seja vizinho a uma margem. Esta velocidade é a soma de um número aleatório no invervalo $[-0.5,0.5]$ somado a velocidade do ponto anterior apenas se o ponto anterior não for margem. A fun\c{c}ão também lida com casos especiais, como valores aleatórios negativos e pontos anteriores a vizinhos de margens. Matemáticamente a opera\c{c}ão relizada é a seguinte:
+
+\begin{equation}
+v_i = v_{i-1} + \lambda \textbf{\, , } \lambda \in [-0.5,0.5]
+\end{equation}
+
+Ao fim de todos estes passos, de gera\c{c}ão à inser\c{c}ão, é necessário ajustar o fluxo da água na linha. Primeiro suave-se a velocidade dos pontos	 para que a diferen\c{c}a entre eles não seja tão discrepante, isto é feito em \textit{suavizaVelocidade}, e então a velocidade dos pontos é normalizada em \textit{normaliza} com o uso da formula de interpola\c{c}ão: 
+
+\begin{equation}
+\phi = \sum_{i=0}^{N} v_i
+\end{equation}
+\begin{equation}
+v_i \leftarrow v_i\cdot\dfrac{\Phi}{\phi}
+\end{equation}
+\\
+onde $\Phi$ é o fluxo inserido pelo usuário.
+
+\subsection{proximaLinha}
+
+A gera\c{c}ão das linhas subsequentes funciona de modo semelhante a fun\c{c}ão primeiraLinha. Cada nova linha utiliza a anterior como base para sua cria\c{c}ão. As diferen\c{c}as residem nos métodos que lidam com as margens e com a velocidade das linhas. O método \textit{aleatorizaMargem} analisa as margens anteriores e sorteia um valor inteiro no intervalo $[-1,1]$. Este valor é somado as margens da linha anterior e atribuindo-se à nova, respeitando sempre o limite das margens, isso garante que a mudan\c{c}a entre a margem anterior e atual seja suave. Para gera\c{c}ão de velocidades na nova linha o método \textit{velocidadeProximaLinha} é empregado. Com intuito de preservar a suavidade da velocidade entre pontos é tomado como base a velocidade do ponto anterior e realizado o produto desta com um valor aleatório real no interválo $[0.9,1.1]$, e no caso do ponto anterior ter velocidade zero, realiza-se um outro cálculo.
+
+\section{Grade}
+Esta interface concentra o método de cria\c{c}ão da matriz e dos frames utilizados durante o programa. O método \textit{initGrade} aloca dinamicamente uma matriz de tamanho $altura \times largura$, as quais tem valor default de 30 por 100 respetivamente. Em \textit{criaPrimeiroFrame} cria-se a primeira imagem que será impressa, a constru\c{c}ão das linhas acontece de baixo para cima, indo da ultima linha da matriz até a primeira. A mesma ideia é utilizada em \textit{criaProximoFrame}, entretanto nesta é criada apenas uma nova linha e inserida na posi\c{c}ão $(indice + alturaDaGrade -1)\text{ \, } mod \text{ \, } alturaDaGrade$ . Um método de desaloca\c{c}ão de memória, \textit{freeGrade}, foi implementado para desalocar a memória requisitada ao final do programa.
+
+
+\section{Util}
+Implementado nesta interface está a fun\c{c}ão \textit{getArgs} que faz a leitura dos parâmetros passado pelo usuário e atribui as suas respectivas variáveis. Após a chamada de \textit{getArgs} um outro método, 
+\textit{corrigeArgs}, é chamado para analisar as entradas fornecidas pelo usuário com intuito que corrigir possíveis parâmetros que comprometam a correta execu\c{c}ão do programa.
+
+\section{main}
+Esta é a interface client do programa, nela são chamadas todas outras fun\c{c}ões que realizam o trabalho bruto de cria\c{c}ão, gerenciamento e impressão da simula\c{c}ão. No anexo 3 está descrito o fluxo de informa\c{c}ões trocadas entre o cliente e suas diversas interfaces. Para encerar a execu\c{c}ão do programa o usuário deve pressionar o comando \textbf{ESC}, que sai do looping principal do programa. Ao fim a memória alocada é devolvida ao sistema e as interfaces do Allegro são finalizadas.
+
+\section{teste}
+Esta interface client é semelhante a main, diferindo-se na sua utilidade. Este client faz a execu\c{c}ão dos métodos do programa com intuito de testar se as saídas do programa são concretas e confiáveis. A principal fun\c{c}ão de teste é \textit{calculaVariacoes} que desempenha diversos cálculos. São gerados 50 frames e aplicado o método \textit{calculaVariacoes} procurando os seguintes valores:
+\begin{enumerate}
+\item[•]{Número de linhas com fluxo correto}
+\item[•]{Velocidade máxima que um ponto de água adquiriu}
+\item[•]{Velocidade mínima que um ponto de água adquiriu}
+\item[•]{Velocidade média entre todos os pontos criados}
+\item[•]{Comprimento máximo da margem esquerda}
+\item[•]{Comprimento mínimo da margem esquerda}
+\item[•]{Comprimento médio da margem esquerda}
+\item[•]{Comprimento máximo da margem direita}
+\item[•]{Comprimento mínimo da margem direita}
+\item[•]{Comprimento médio da margem direita}
+\end{enumerate}
+Por fim esses valores são impressos na tela de forma diagramada.
+
+\section{rotinaTeste}
+Esta interface concentra os dois métodos de teste, \textit{testaCorrecao} e \textit{calculaVariacoes}. Na primeira testa-se se o fluxo de uma linha é igual o fluxo desejado pelo usuário e na segunda realiza-se os outros cálculos e compara\c{c}ões, como o comprimento maior, menor e médio das margens, velocidades máxima, mínima e média. A fun\c{c}ão também retorna quantas linhas do frame análisado passaram no teste do fluxo.
+
+\section{Implementa\c{c}ão grafica}
+Na parte B do exercício programa 2 a nova tarefa a ser implementada é a interface gráfica do programa utilizando a biblioteca gráfica Allegro. Tomando mão da modularização dos métodos foi possível manter a mesma implementação da etapa anterior fazendo com que a unica alteração substancial dentro do ep seja na dinâmica de impressão que agora é feita de forma gráfica e não mais textual. Descreveremos completamente as mudanças e melhorias realizadas para que o programa ganhasse o aspecto desejado.
+
+\subsection{main}
+Estruturalmente main continua como na fase anterior, como seu fluxo de funcionamento. Existe agora uma nova funçcão /testeit{STinitAllegro} que inicializa as funcionalidades utilizadas pelo Allegro para simulação gráfica. No looping principal é executado os métodos de criação da grade, verificação de eventos vindos do teclado e impressão gráfica da grade. Decidimos por implementar uma discreta navegação do barco ao longo do rio para nos nortear quanto o desempenho da velocidade do barco em relação a animação do fundo. Para que a execução seja encerrada implemetamos a tecla \textbf{ESC} que para o programa, desaloca a memória utilizada e encerra o programa.
+\subsection{PrintAllegro}
+Em PrintAllegro temos a \textit{OutputArray} que cuida de toda lógica e impressão da parte gráfica. Caso a linha anterior seja menor que a atual um triangulo é impresso para suavizar as diferenças das margens, caso a anterior seja maior e a atual menor o mesmo também é feito, só o triângulo que muda de orientação, no caso de margens com mesmo comprimento uma linha reta é desenhada. Essa metodologia é empregada para as duas margens; no caso de ilhas, uma simples impressão é realizada.
+Uma elipse foi escolhida para representar a posição do barco, sua posição pode ser manipulada com as setas do teclado simulando quase que totalmente o funcionamento do jogo. Cada caracter textual tem como valor default 5x5 pixels, mas este valor pode ser alterado pelo usuário, entretando uma alta densidade de pixels torna a execução muito mais lenta.
+
+\section{Implementa\c{c}ões finais e dinâmica de jogo}
+\subsection{main}
+Em nosso arquivo principal main , como nas etapas anteriores, acontece toda a dinâmica e processamento de jogo. Analisaremos linearmente as mudan\c{c}as feitas para melhor interdimento.
+As bibliotecas Allegro aumentaram, sendo agora um total de 8. Cada uma é responsável por algo implementado no código, temos as principais:
+
+\begin{enumerate}
+\item[]{Allegro\_image - Responsável pelo sprite do barco.}
+\item[]{Allegro\_audio - Responsável pela música de fundo e o sample.}
+\item[]{Allegro\_acodec - Responsável pelo codec de som.}
+\item[]{Allegro\_font - Responsável pelo gerenciamento da escrita na tela.}
+\item[]{Allegro\_ttf - Responsável pela fonte utilizada na escrita.}
+\end{enumerate}
+
+Além das novas diretivas Allegro nosso programa possui um analisador léxico e sintatico, implementados com Flex e Bison, uma maior descri\c{c}ão será feita na se\c{c}ão do analisador. Continuando no arquivo main temos o looping principal que cuida da análise de eventos vindos do teclado e de seu processamento, cada comando tem um comportamento bem definido influenciando de forma singular a movimenta\c{c}ão do barco. O funcionamento geral do looping será explicado nas interfaces chamadas dentro dele e no anexo 5 que representa um diagrama do fluxo de processamento do looping. Por fim o main desaloca toda memória utilizada pelos processos do allegro e a memória alocada para manuten\c{c}ão da grade.
+
+\subsection{Analisador léxico e sintatico}
+Nosso analisador léxico e sintatico foi escrito utilizando as ferramentas Flex e Bison respectivamente. Em \textit{config.l} são definidos as expressões regulares que o analisador léxico deve interpretar e de que forma essas informa\c{c}ões devem ser retornadas para o Bison. Em \textit{config.y} a semântica dos itens léxicos é delimitada, atribuindo a cada variável externa vinda do header \textbf{options.h}, um valor lido do arquivo de texto processado. Essas variáveis externas estão definidas na header mencionada e são visíveis a main.c como parâmetros de configura\c{c}ão do programa. Na fase anterior a entrada era processada pelo via stream de dados, sendo substituido agora pelo nosso analisador, entretando o usuário ainda pode passar parâmetros via linha de comando, e estes possuem maior prioridade sobre o analisador. Além disso parâmetros que possam comprometer o funcionamento do programa são analisados em \textit{util.c} e corrigidos para valores default mínimos.
+
+\subsection{PrintAllegro}
+A impressão da interface gráfica do programa é o principal elo de interatividade entre o jogador e o programa, e pensando nisso optamos por implementar recursos visuais de fácil intendimento de todos usuários. Em compara\c{c}ão a a fase anterior podemos citar com grande diferen\c{c}a na visualiza\c{c}ão do jogo o sprite (objeto bidimensional que se move em um jogo) do barco e sua movimenta\c{c}ão.
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[scale=0.70]{boat.png}
+\caption{Barco}
+\end{center}
+\end{figure}
+
+\subsection{Movimenta\c{c}ão do barco e controles}
+A movimenta\c{c}ão do barco acontece utilizando as quatro setas do teclado. Os eventos são lidos no main.c e processados lá mesmo. A cada toque para esquerda ou direita o barco efetua uma pequena rota\c{c}ão. Inicialmente o barco possui uma posi\c{c}ão neutra próximo ao meio inferior da tela. A cada remada para frente uma pequena velocidade é somada e a posi\c{c}ão do barco no próximo frame será a frente da anterior. Caso a tecla baixo seja pressionada ou o barco fique estático sem receber nenhum comando o barco é lentamente movido para trás utilizando a velocidade que a água adquire na posi\c{c}ão (x,y) na grade. Isso simula a for\c{c}a de arrasto que um barco pode ter ao navegar contra uma correnteza contrária.
+Caso o usuário queira sair da tela por qualquer um dos quatro lados a posi\c{c}ão do barco é corrigida para que este sempre esteja a vista do jogador. Nas rota\c{c}ões o barco usa a variável angle, rotando uma quatidade |X| de radianos de acordo com o lado requisitado. Os cálculos trigonométricos necessários são feitos em \textbf{Vector\_2D} e foram implementados de forma a serem chamados o mínimo de vezes possível, evitando assim muitas chamadas de fun\c{c}ões matemáticas custosas.
+
+
+\subsection{Dinâmica de jogo}
+Para se jogar o simulador de canoagem deve-se desviar das ilhas o máximo de tempo possível. Existe um contador implementado no canto da tela que conta quantos minutos e segundos o usuário passou sem ser atingido por uma margem ou ilha. Cada vez que uma colisão acontece o contador de tempo é resetado e o barco adquire uma pequena invencibilidade de cerca de 3 segundos para que o usuário corrija sua posi\c{c}ão na água. Durante todo o jogo uma pequena música de fundo é tocada e a cada remada um som é executado.
+Caso o usuário queira finalizar o jogo deve-se apertar a tecla \textbf{ESC}, que o leva para uma tela que exibe o maior tempo que o jogador conseguiu jogar sem colisão e um placar de quantos pontos ele conseguiu marcar.
+
+\section{Execu\c{c}ão do programa}
+\subsection{Makefile}
+No makefile do programa existem três receitas de compila\c{c}ão que geram três alvos diferentes:
+\begin{enumerate}
+\item[-]{make - Gera o executável ep4 que é o jogo Canoagem}
+\item[-]{make teste - Gera o executável teste que realiza as simula\c{c}ões de teste do rio e a gera\c{c}ão do relatório}
+\item[-]{make clean - Limpa os arquivos objeto e executáveis gerados pela exe-cu\c{c}ão das outras receitas}
+\end{enumerate}
+Optamos por conservar os arquivos ligados ao executável teste e sua receita no makefile, a confiabilidade e robustez da execução ainda podem ser verificadas com o programa.
+\subsection{Parâmetros de execu\c{c}ão}
+A simula\c{c}ão é feita a partir de variáveis setadas pelo parser do analisador. Entretando, caso seja do desejo do usuário pode-se entrar com diversos parâme-tros de defini\c{c}ão para execu\c{c}ão da simula\c{c}ão ou do teste, os quais são os seguintes:
+\begin{enumerate}
+\item[]{-b  $\rightarrow$ FPS inicial}
+\item[]{-l  $\rightarrow$ Largura do Rio}
+\item[]{-s  $\rightarrow$ Semente para o gerador aleatorio}
+\item[]{-f  $\rightarrow$ Fluxo da agua}
+\item[]{-pI $\rightarrow$ Probabilidade de haver obstaculos}
+\item[]{-dI $\rightarrow$ Distancia minima entre obstaculos}
+\item[]{-lM $\rightarrow$ Limite das margens}
+\item[]{-v  $\rightarrow$ Verbose}
+\item[]{-D  $\rightarrow$ Tamanho do lado de cada quadrado de pixel}
+\end{enumerate}
+No arquivo de entrada para o analisador os campos devem ser escritos da seguinte forma:
+\begin{enumerate}
+\item[]{FPS = \%d}
+\item[]{Semente = \%d}
+\item[]{Largura = \%d}
+\item[]{Fluxo = \%d}
+\item[]{Pixel = \%d}
+\item[]{Verbose = \%d}
+\item[]{Probabilidade = \%f}
+\item[]{Distancia = \%d}
+\item[]{Limite = \%f}
+\end{enumerate}
+onde \%d é um número inteiro e \%f um ponto flutuante. As posi\c{c}ões podem ser permutadas ou omitidas, neste ultimo caso receberão valores default, porem a forma de escrita apresentada acima (letras maiúsculas e minúsculas) deve ser respeitada, afim de que o parâmetro delimitado seja lido corretamente. Por fim o arquivo de configura\c{c}ão deve ter o nome \textbf{entrada.txt} e estar localizado no mesmo diretório do executável.
+
+
+\newpage
+\begin{center}
+\textbf{\text{\Large  Anexo 1 - Fluxo de funcionamento primeiraLinha}}
+\begin{tikzpicture}[>=stealth',shorten >=1pt,node distance=3cm,on grid,initial/.style    ={}]
+  \node[state]          (P)                        {$pL$};
+  \node[state]          (B) [ above =of P]    {$alePM$};
+  \node[state]          (E) [above right =of P]    {$marE$};
+  \node[state]          (D) [right =of P]    {$marD	$};
+  \node[state]          (M) [below right =of P]    {$iIlha	$};
+  \node[state]          (K) [below =of P]    {$velAPL$};
+  \node[state]          (F) [below left =of P]    {$sVel$};
+  \node[state]          (C) [left =of P]    {$nLz$};
+\tikzset{mystyle/.style={<->,double=orange}} 
+\tikzset{every node/.style={fill=white}} 
+\path (P)     edge [mystyle]    node   {$1$} (B)
+      (P)     edge [mystyle]    node   {$2$} (E) 
+      (P)     edge [mystyle]    node   {$3$} (D) 
+      (P)     edge [mystyle]    node   {$4$} (M) 
+      (P)     edge [mystyle]    node   {$5$} (K)
+      (P)     edge [mystyle]    node   {$6$} (F)
+      (P)     edge [mystyle]    node   {$7$} (C);
+
+\textbf{\text{ primeiraLinha - Legenda }}
+\end{tikzpicture}
+\end{center}
+\textbf{\text{  primeimaLinha - Legenda }}
+\begin{enumerate}
+\item[-]{pL - primeiraLinha}
+\item[-]{alePM - aleatorizaPrimeiraMargem}
+\item[-]{marE - margemEsquerda}
+\item[-]{marD - margemDireita}
+\item[-]{iIlha - InsereIlha}
+\item[-]{velAPL - velocidadeDaAguaPrimeiraLinha}
+\item[-]{sVel - suavizaVelocidades}
+\item[-]{nLz - normaliza}
+\end{enumerate}
+
+
+\newpage
+\begin{center}
+\textbf{\text{\Large  Anexo 2 - Fluxo de funcionamento proximaLinha}}
+\begin{tikzpicture}[>=stealth',shorten >=1pt,node distance=3cm,on grid,initial/.style    ={}]
+  \node[state]          (P)                        {$pxL$};
+  \node[state]          (B) [ above =of P]    {$aleM$};
+  \node[state]          (C) [right =of B]    {$marD$};
+    \node[state]          (M) [above right =of C]    {$marE$};
+  \node[state]          (F) [above left   =of P]    {$iIlha$};
+  \node[state]          (G) [right =of P]    {$velpxL$};
+  \node[state]          (R) [below =of G]    {$rRand$};
+  \node[state]          (S) [below =of P]    {$sVel$};
+  \node[state]          (H) [below left =of P]    {$nLz$};
+\tikzset{mystyle/.style={<->,double=orange}} 
+\tikzset{every node/.style={fill=white}} 
+\path (P)     edge [mystyle]    node   {$1$} (B)
+      (B)     edge [mystyle]    node   {$2$} (M)
+      (B)     edge [mystyle]    node   {$3$} (C)  
+      (P)     edge [mystyle]    node   {$4$} (F)
+      (P)     edge [mystyle]    node   {$5$} (G)
+      (G)     edge [mystyle]    node   {$6$} (M)
+      (G)     edge [mystyle]    node   {$7$} (C)
+      (G)     edge [mystyle]    node   {$8$} (R)
+      (P)     edge [mystyle]    node   {$9$} (S)
+      (P)     edge [mystyle]    node   {$10$} (H);
+\end{tikzpicture}
+\end{center}
+\textbf{\text{  proximaLinha - Legenda }}
+\begin{enumerate}
+\item[-]{pxL - proximaLinha}
+\item[-]{aleM - aleatorizaMargem}
+\item[-]{marE - margemEsquerda}
+\item[-]{marD - margemDireita}
+\item[-]{iIlha - InsereIlha}
+\item[-]{velpxL - velocidadeProximaLinha}
+\item[-]{rRand - realRandomico}
+\item[-]{sVel - suavizaVelocidades}
+\item[-]{nLz - normaliza}
+\end{enumerate}
+
+
+
+\newpage
+\begin{center}
+\textbf{\text{\Large  Anexo 3 - Fluxo de funcionamento da interface gráfica}}
+\begin{tikzpicture}[>=stealth',shorten >=1pt,node distance=3cm,on grid,initial/.style    ={}]
+  \node[state]          (P)                         {$PrtF$};
+  \node[state]          (B) [ left =of P]           {$FrtF$};
+  \node[state]          (C) [left =of B]            {$STall$};
+  \node[state]          (F) [below right   =of P]    {$inK$};
+  \node[state]          (M) [below left =of F]     {$NxtF$};
+  \node[state]          (G) [above left =of M]           {$outK$};
+  \node[state]          (R) [below left =of G]           {$endE$};
+\tikzset{mystyle/.style={->,double=orange}} 
+\tikzset{every node/.style={fill=white}} 
+\path (C)     edge [mystyle]    node   {$1$} (B)
+      (B)     edge [mystyle]    node   {$2$} (P)
+      (P)     edge [mystyle]    node   {$3$} (F)  
+      (F)     edge [mystyle]    node   {$4$} (M)
+      (M)     edge [mystyle]    node   {$5$} (G)
+      (G)     edge [mystyle]    node   {$6$} (P)
+      (G)     edge [mystyle]    node   {$7$} (R);
+\end{tikzpicture}
+\end{center}
+\textbf{\text{  Fluxo de funcionamento da interface gráfica - Legenda }}
+\begin{enumerate}
+\item[-]{STall - Inicialização do allegro}
+\item[-]{FrtF - Criação do primero frame}
+\item[-]{PrtF - Impressão do frame}
+\item[-]{inK - Leitura de um evento do teclado}
+\item[-]{NxtF - Criação dos novos frames}
+\item[-]{outK - Execução de um evento  do teclado}
+\item[-]{endE - Fim da execução}
+\end{enumerate}
+
+
+
+
+\newpage
+\begin{center}
+\textbf{\text{\Large  Anexo 4 - Fluxo de funcionamento main}}
+\begin{tikzpicture}[>=stealth',shorten >=1pt,node distance=3cm,on grid,initial/.style    ={}]
+  \node[state]          (P)                        {$main$};
+  \node[state]          (B) [ above left =of P]    {$gArgs$};
+  \node[state]          (Q) [ left =of P]    {$cArgs$};
+  \node[state]          (X) [ below =of Q]    {$yy$};
+  \node[state]          (M) [above =of P]    {$initG$};
+  \node[state]          (D) [above right =of P]    {$cPrFrame$};
+    \node[state]        (K) [right =of D]    {$STinA$};
+  \node[state]          (C) [below =of P]    {$OutA$};
+  \node[state]          (E) [below right =of D]    {$cPxFrame$};
+  \node[state]          (F) [right =of C]    {$fOut$};
+  \node[state]          (T) [right =of F]    {$fGrd$};
+ \node[state]          (L) [above  =of T]    {$Fim$};
+\tikzset{mystyle/.style={<->,double=orange}} 
+\tikzset{every node/.style={fill=white}} 
+\path (P)     edge [mystyle]    node   {$1$} (X)
+	  (P)     edge [mystyle]    node   {$2$} (B)
+      (P)     edge [mystyle]    node   {$3$} (Q) 
+      (P)     edge [mystyle]    node   {$4$} (M) 
+      (P)     edge [mystyle]    node   {$5$} (D)
+      (D)     edge [mystyle]    node   {$6$} (K)
+      (P)     edge [mystyle]    node   {$6$} (C)
+      (P)     edge [mystyle]    node   {$7$} (E)
+      (C)     edge [mystyle]    node   {$9$} (F)
+      (F)     edge [mystyle]    node   {$10$} (T)
+      (T)     edge [mystyle]    node   {$11$} (L);
+
+      \tikzset{mystyle/.style={->,double=orange}} 
+\tikzset{every node/.style={fill=white}} 
+\path
+      (E)     edge [mystyle]    node   {$loop$} (C)
+      (C)     edge [mystyle]    node   {$loop$} (E);
+
+\textbf{\text{ primeiraLinha - Legenda }}
+\end{tikzpicture}
+\end{center}
+\textbf{\text{  main - Legenda }}
+\begin{enumerate}
+\item[-]{yy - yyparse}
+\item[-]{gArgs - getArgs}
+\item[-]{cArgs - corrigeArgs}
+\item[-]{initG - initGrade}
+\item[-]{cPrFrame - criaPrimeiroFrame}
+\item[-]{STinA - STinitAllegro}
+\item[-]{OutA - OutputArray}
+\item[-]{cPxFrame - criaProximoFrame}
+\item[-]{fOut - freeOutput}
+\item[-]{fGrd - freeGrade}
+\item[-]{Fim - Fim da execu\c{c}ão do programa}
+\end{enumerate}
+
+\newpage
+\begin{center}
+\textbf{\text{\Large  Anexo 5 - Fluxo de funcionamento do looping principal}}
+\begin{tikzpicture}[>=stealth',shorten >=1pt,node distance=3cm,on grid,initial/.style    ={}]
+  \node[state]          (P)                         {$PrtF$};
+  \node[state]          (B) [ left =of P]           {$FrtF$};
+  \node[state]          (C) [left =of B]            {$STall$};
+  \node[state]          (F) [right   =of P]    {$inK$};
+    \node[state]          (K) [below    =of F]    {$KeyP$};
+  \node[state]          (M) [left =of K]     {$NxtF$};
+  \node[state]          (G) [below =of B]           {$outK$};
+  \node[state]          (R) [ left =of G]           {$ScrW$};
+  \node[state]          (Y) [ above left =of R]           {$endE$};
+
+\tikzset{mystyle/.style={->,double=orange}} 
+\tikzset{every node/.style={fill=white}} 
+\path (C)     edge [mystyle]    node   {$1$} (B)
+      (B)     edge [mystyle]    node   {$2$} (P)
+      (P)     edge [mystyle]    node   {$3$} (F)  
+      (F)     edge [mystyle]    node   {$4$} (K)
+      (K)     edge [mystyle]    node   {$5$} (M)
+      (M)     edge [mystyle]    node   {$6$} (G)
+      (G)     edge [mystyle]    node   {$7$} (P)
+      (G)     edge [mystyle]    node   {$8$} (R)
+      (R)     edge [mystyle]    node   {$9$} (Y);
+
+\end{tikzpicture}
+\end{center}
+\textbf{\text{  Fluxo de funcionamento do looping principal - Legenda }}
+\begin{enumerate}
+\item[-]{STall - Inicialização do allegro}
+\item[-]{FrtF - Criação do primero frame}
+\item[-]{PrtF - Impressão do frame}
+\item[-]{inK - Leitura de um evento do teclado}
+\item[-]{KeyP - Processamento do comando (métodos Vector\_2D, corre\c{c}ão da posi\c{c}ão do barco fora da tela)}
+\item[-]{NxtF - Criação dos novos frames}
+\item[-]{outK - Execução de um evento  do teclado}
+\item[-]{ScrW - Mostra a tela de Score do jogador}
+\item[-]{endE - Fim da execução}
+\end{enumerate}
+
+Obs: O processamento entre os passos 3-7 é um looping até o user teclar \textbf{ESC}
+
+\end{document}

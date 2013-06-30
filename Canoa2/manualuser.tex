@@ -14,7 +14,7 @@
 \usetikzlibrary{arrows,positioning,automata}
 \begin{document}
 
-\begin{center}{\Large \bf Documenta\c{c}ão EP2-B Canoagem \\ }\end{center}
+\begin{center}{\Large \bf Documenta\c{c}ão EP4 - Canoagem \\ }\end{center}
 \begin{center}{\Large \bf Manual do Usuário\\ }\end{center}
 
 \begin{center}
@@ -78,13 +78,30 @@ Agora estamos em nossa segunda fase de desenvolvimento do nosso simulador de can
 
 \end{enumerate}
 
+\section{Canoagem - Versão final}
+Primeiramente agradecemos aos nossos fãs pelo paciência que tiveram ao longo do desenvolvimento do nosso projeto, finalmente estamos lan\c{c}ando a primeira versão final de nosso jogo de canoagem. Desde a última versão diversos pontos no jogo foram mudados, os quais podemos cita a seguir:
+
+\begin{enumerate}
+\item[]{Inserido um pequeno barquinho na simula\c{c}ão}
+\item[]{Maior estabilidade dos movimentos do barco}
+\item[]{Dinâmica de remadas para movimenta\c{c}ão do barco}
+\item[]{Efeito sonoro ao pressionar as setas}
+\item[]{Música de fundo para relaxar durante a jogatina}
+\item[]{Nova dinâmica de colisão com ilhas e margens}
+\item[]{Contador para medir quanto tempo o jogador fica sem colidir com um obstáculo}
+\item[]{Score final do maior tempo alcan\c{c}ado e a quantidade de pontos ganho}
+\end{enumerate}
+\section{Como jogar ?}
+O jogador iniciará o jogo em uma posi\c{c}ão próximo ao centro inferior da tela. Para jogar deve-se desviar dos obstáculos remando sempre para os lados ou para frente, caso o jogador não pressione nenhum botão seu barco será trazido lentamente para o fundo da tela. Ao navegar pelo rio certos trechos possuem mais correnteza, com isso a dirigibilidade do barco pode bruscamente se alterar. O jogador deve ter a habilidade necessária para navegar nesses pontos de correnteza e tentar marcar o máximo de pontos possível, quanto mais tempo mais pontos.
+Caso o jogador opte por fechar o jogo basta pressionar a tecla \textbf{ESC} do teclado, uma tela de score será exibida, nela será mostrado o maior tempo que o jogador conseguiu ficar na tela e a maior quantidade de pontos marcados.
+
 
 \section{Canoagem - Parâmetros e execu\c{c}ão}
 Nosso programa está pronto para ser executado, para isso basta digitar no seu terminal \textit{./ep3 ou ./teste}. Uma simulação será gerada na tela do usuário e prosseguirá até que o usuário decida por abortar a execu\c{c}ão, isso pode ser feito pressionando a tecla \textit{ESC}, no caso do teste isso não é necessário, o programa irá rodar uma quantidade pré-definida de tempo e exibirá o relatório no terminal.
-Pode-se customizar a simula\c{c}ão e o teste por meio de passagem de parâmetros para o programa. Caso o usuário realize uma chamada simples como a explicada a cima valores padrões de execu\c{c}ão serão utilizados para gerar o rio. Para inserir novos parâmetros temos as seguintes op\c{c}ões disponíveis:
+Pode-se customizar a simula\c{c}ão e o teste por meio de passagem de parâmetros para o programa. Caso o usuário realize uma chamada simples como a explicada acima valores padrões de execu\c{c}ão serão utilizados para gerar o rio. Para inserir novos parâmetros temos as seguintes op\c{c}ões disponíveis:
 
 \begin{enumerate}
-\item[]{-b  $\rightarrow$ Velocidade do barco}
+\item[]{-b  $\rightarrow$ Frames por segundo}
 \item[]{-l  $\rightarrow$ Largura do Rio}
 \item[]{-s  $\rightarrow$ Semente para o gerador aleatorio}
 \item[]{-f  $\rightarrow$ Fluxo da agua}
@@ -98,23 +115,20 @@ Pode-se customizar a simula\c{c}ão e o teste por meio de passagem de parâmetro
 
 \end{enumerate}
 
-podemos, por exemplo, ter a seguinte chamada do programa : \textit{"./ep3 -l100 -f50 -b2 -lM0.5 -v"} que simularia a execu\c{c}ão do rio, ou mesmo \textit{"./teste -l100 -f50 -b2 -lM0.5 -v"} que simularia a concretude e a confiabilidade da execu\c{c}ão.
+podemos, por exemplo, ter a seguinte chamada do programa : \textit{"./ep3 -l100 -f50 -b2 -lM0.5 -v"} que simularia a execu\c{c}ão do rio, ou mesmo \textit{"./teste -l100 -f50 -b2 -lM0.5 -v"} que simularia a concretude e a confiabilidade da execu\c{c}ão.\\
+No caso "sem passagem" ocorre que o programa está lendo um arquivo que está dentro do mesmo diretório do executável, chamado \textit{entrada.txt}. Neste arquivo estão alguns parâmetros que o jogador pode configurar em seu jogo, para isso basta incluir ou  editar os valores numéricos, caso o usuário remova algum dos itens de configura\c{c}ão valores padrões serão utilizados para a exe-cu\c{c}ão. Os valores que podem ser incluidos ou editados pelo jogador são os seguintes: 
 
-\newpage
-\subsection{Anexo - Fotos da execu\c{c}ão}
-\begin{figure}[htb]
-\begin{center}
-\includegraphics[scale=0.4]{figura2.png}
-\caption{Execu\c{c}ão 1}
+\begin{enumerate}
+\item[]{FPS = \%d}
+\item[]{Semente = \%d}
+\item[]{Largura = \%d}
+\item[]{Fluxo = \%d}
+\item[]{Pixel = \%d}
+\item[]{Verbose = \%d}
+\item[]{Probabilidade = \%f}
+\item[]{Distancia = \%d}
+\item[]{Limite = \%f}
+\end{enumerate}
+onde os campos \%d e \%f serão substituidos por um número inteiro e um decimal com ponto respectivamente. A forma de escrita apresentada acima (letras maiúsculas e minúsculas) deve ser respeitada, afim de que o parâmetro delimitado seja lido corratamente. Por fim o arquivo de configura\c{c}ão deve ter o nome \textbf{entrada.txt} e estar localizado no mesmo diretório do executável.
 
-\end{center}
-\end{figure}
-
-
-\begin{figure}[htb]
-\begin{center}
-\includegraphics[scale=0.3]{figura1.png}
-\caption{Execu\c{c}ão 2}
-\end{center}
-\end{figure}
 \end{document}
